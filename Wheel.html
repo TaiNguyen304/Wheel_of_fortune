@@ -400,6 +400,14 @@
         var supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd3diemp6Y2J0a2tzZWh3ZmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDIyOTYsImV4cCI6MjA5NTUxODI5Nn0.Zcn4hvlLtRirM-SPGrFvu3ivu8RYF9WngvbxCMCGfh4';
         var supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomid');
+
+        if (!roomId) {
+            document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;font-size:24px;color:white;text-align:center;padding:20px;">Vui lòng truy cập với tham số ?roomid=MÃ_PHÒNG<br><br><a href="index.html" style="color:yellow;">Quay về đăng nhập</a></div>';
+            throw new Error('Missing roomid');
+        }
+
         let currentRotation = 0;
         let isSpecialMode = false;
         let specialWedges = [];
@@ -490,8 +498,7 @@
             dotsRing.appendChild(wrapper);
         }
 
-        function saveWheelState() {
-            if (isSpinningNow) return;
+        function buildWheelState() {
             const state = {
                 currentRotation: currentRotation,
                 isSpecialMode: isSpecialMode,
@@ -508,38 +515,55 @@
                 const el = document.getElementById(targetId);
                 if (el) state.itemsState[itemName] = el.style.display;
             });
-            localStorage.setItem('wheel_last_state', JSON.stringify(state));
+            return state;
         }
 
-        function loadWheelState() {
-            const saved = localStorage.getItem('wheel_last_state');
-            if (!saved) return;
-            try {
-                const state = JSON.parse(saved);
-                currentRotation = state.currentRotation || 0;
-                isSpecialMode = state.isSpecialMode || false;
-                specialWedges = state.specialWedges || [];
+        async function saveWheelState() {
+            if (isSpinningNow || !roomId) return;
+            const state = buildWheelState();
+            await supabase.from('game_room_state').upsert({
+                room_id: roomId,
+                wheel_state: state,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'room_id' });
+        }
 
-                wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
-                wheelGraphic.style.display = state.wheelDisplay || 'block';
-                wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
-                activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+        function applyWheelState(state) {
+            if (!state) return;
+            currentRotation = state.currentRotation || 0;
+            isSpecialMode = state.isSpecialMode || false;
+            specialWedges = state.specialWedges || [];
 
-                if (state.zoomed) wheelArea.classList.add('zoomed');
-                else wheelArea.classList.remove('zoomed');
+            wheelGraphic.style.transition = 'none';
+            wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
+            wheelGraphic.style.display = state.wheelDisplay || 'block';
+            wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
+            activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
 
-                specialValuePopup.style.display = state.popupDisplay || 'none';
-                specialValuePopup.innerText = state.popupText || '0 điểm';
+            if (state.zoomed) wheelArea.classList.add('zoomed');
+            else wheelArea.classList.remove('zoomed');
 
-                if (state.itemsState) {
-                    Object.keys(state.itemsState).forEach(itemName => {
-                        const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
-                        const el = document.getElementById(targetId);
-                        if (el) el.style.display = state.itemsState[itemName];
-                    });
-                }
-            } catch (e) { console.error(e); }
+            specialValuePopup.style.display = state.popupDisplay || 'none';
+            specialValuePopup.innerText = state.popupText || '0 điểm';
+
+            if (state.itemsState) {
+                Object.keys(state.itemsState).forEach(itemName => {
+                    const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                    const el = document.getElementById(targetId);
+                    if (el) el.style.display = state.itemsState[itemName];
+                });
+            }
+        }
+
+        async function loadWheelState() {
+            const { data } = await supabase
+                .from('game_room_state')
+                .select('wheel_state')
+                .eq('room_id', roomId)
+                .single();
+            if (data && data.wheel_state) {
+                try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
+            }
         }
 
         function executeToggleItem(itemName, isShow) {
@@ -578,45 +602,49 @@
             saveWheelState();
         }
 
+        const MIN_SPIN_ROTATIONS = 5;
+
+        function computeSpinTarget(startRot, duration, randomOffset, minRotations) {
+            const minRot = (minRotations || MIN_SPIN_ROTATIONS) * 360;
+            let finalDuration = parseFloat(duration);
+            if (isNaN(finalDuration) || finalDuration <= 0) finalDuration = 5;
+            const durationRot = finalDuration * 360;
+            const totalExtra = Math.max(minRot, durationRot) + (randomOffset || 0);
+            const start = parseFloat(startRot);
+            return { startRot: start, targetRot: start + totalExtra, finalDuration: finalDuration };
+        }
+
         // BIẾN TOÀN CỤC PHỤ TRÁCH THỰC HIỆN ĐỒNG BỘ MƯỢT MÀ THEO FRAME THỜI GIAN
         let animationFrameId = null;
 
-        function executeSpin(duration, randomOffset, startTime, targetRotFromSource) {
-            // 1. Khử các animation cũ đang chạy ngầm để tránh trùng lặp
+        function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
             if (animationFrameId) {
                 cancelAnimationFrame(animationFrameId);
             }
             isSpinningNow = true;
 
-            // 2. ÉP BUỘC TẮT TRANSITION CSS CỦA ĐỒ HỌA TRƯỚC KHI QUAY
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
                 wheelGraphic.style.transitionProperty = 'none';
                 wheelGraphic.style.transitionDuration = '0s';
             }
 
-            // 3. Chuẩn hóa thời gian quay (duration)
-            let finalDuration = parseFloat(duration);
-            if (isNaN(finalDuration) || finalDuration <= 0) {
-                finalDuration = 5;
-            }
+            const startRotBase = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
+                ? parseFloat(startRotFromSource)
+                : getVisualRotation();
 
-            const extraSpins = finalDuration * 360;
-            const startRot = currentRotation;
+            const spin = computeSpinTarget(startRotBase, duration, randomOffset, minRotations);
+            const startRot = spin.startRot;
+            const targetRot = spin.targetRot;
+            const finalDuration = spin.finalDuration;
 
-            // 4. Đồng bộ góc đích tuyệt đối từ nguồn phát
-            let targetRot;
-            if (targetRotFromSource !== undefined && targetRotFromSource !== null && !isNaN(targetRotFromSource)) {
-                targetRot = targetRotFromSource;
-            } else {
-                targetRot = currentRotation + extraSpins + (randomOffset || 0);
-            }
+            currentRotation = startRot;
+            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
 
             if (document.getElementById('specialValuePopup')) {
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            // 5. Đồng bộ mốc thời gian thực tế toàn hệ thống
             const startTimestamp = startTime || Date.now();
             const durationMs = finalDuration * 1000;
 
@@ -626,10 +654,9 @@
 
             function updateProgress() {
                 const now = Date.now();
-                const elapsed = now - startTimestamp; // Khoảng thời gian thực tế đã trôi qua kể từ lúc nhấn nút
+                const elapsed = now - startTimestamp;
 
                 if (elapsed >= durationMs) {
-                    // Khi chạy hết thời gian -> Khóa góc đích tuyệt đối
                     currentRotation = targetRot;
                     wheelGraphic.style.transition = 'none';
                     wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
@@ -640,15 +667,13 @@
                     if (elapsed < 0) {
                         wheelGraphic.style.transform = `rotate(${startRot}deg)`;
                     } else {
-                        // Tính toán tỷ lệ và áp công thức nội suy mượt chuyển động từng khung hình
                         const t = elapsed / durationMs;
                         const progress = easeOutQuint(t);
                         const currentPos = startRot + (targetRot - startRot) * progress;
 
-                        wheelGraphic.style.transition = 'none'; // Đảm bảo luôn tắt transition trong suốt quá trình
+                        wheelGraphic.style.transition = 'none';
                         wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
                     }
-                    // Gọi frame tiếp theo để tạo chuyển động liên tục mượt mà giống Player
                     animationFrameId = requestAnimationFrame(updateProgress);
                 }
             }
@@ -792,11 +817,11 @@
         loadWheelState();
 
         try {
-            const channel = supabase.channel('wheel_room');
+            const channel = supabase.channel('wheel_room_' + roomId);
             channel.on('broadcast', { event: 'toggle_wheel' }, function (payload) {
                 executeToggleWheel(payload.payload.type, payload.payload.isShow);
             }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
-                executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.targetRot);
+                executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
@@ -827,17 +852,14 @@
                 }
             });
 
-            channel.on('broadcast', { event: 'request_sync' }, function () {
+            channel.on('broadcast', { event: 'request_sync' }, async function () {
                 if (isSpinningNow) return;
-                const saved = localStorage.getItem('wheel_last_state');
-                if (saved) {
-                    const state = JSON.parse(saved);
-                    channel.send({
-                        event: 'spin_wheel_sync',
-                        type: 'broadcast',
-                        payload: { rotation: state.currentRotation, isSpecialMode: state.isSpecialMode, wedges: state.specialWedges }
-                    });
-                }
+                const state = buildWheelState();
+                channel.send({
+                    event: 'spin_wheel_sync',
+                    type: 'broadcast',
+                    payload: { rotation: state.currentRotation, isSpecialMode: state.isSpecialMode, wedges: state.specialWedges }
+                });
             }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
                 if (isSpinningNow) return;
                 if (animationFrameId) cancelAnimationFrame(animationFrameId);
@@ -850,40 +872,6 @@
             });
 
         } catch (e) { }
-
-        window.addEventListener('storage', function (e) {
-            if (e.key === 'local_wheel_cmd') {
-                const data = JSON.parse(e.newValue);
-                if (data.event === 'toggle_item') executeToggleItem(data.itemName, data.isShow);
-                if (data.event === 'toggle_wheel') executeToggleWheel(data.type, data.isShow);
-                if (data.event === 'spin_wheel') {
-                    // Sửa lại đường dẫn lấy data chuẩn xác từ payload để tránh bị undefined
-                    const duration = data.payload?.duration || data.duration;
-                    const randomOffset = data.payload?.randomOffset || data.randomOffset;
-                    const startTime = data.payload?.startTime || data.startTime;
-                    const targetRot = data.payload?.targetRot || data.targetRot;
-
-                    executeSpin(duration, randomOffset, startTime, targetRot);
-                }
-                if (data.event === 'pointer_light') executePointerLight(data.pointerName, data.state);
-                if (data.event === 'zoom_pointer') {
-                    if (data.type === 'in') wheelArea.classList.add('zoomed');
-                    else wheelArea.classList.remove('zoomed');
-                    saveWheelState();
-                }
-                if (data.event === 'shuffle_special') {
-                    specialWedges = data.wedges;
-                    specialValuePopup.style.display = 'none';
-                    saveWheelState();
-                }
-                if (data.event === 'show_value') executeShowValue();
-                if (data.event === 'hide_value') executeHideValue();
-                if (data.event === 'find_highest') executeFindHighest(data.startTime, data.targetRot, data.targetIndex);
-                if (data.event === 'sync_scores') executeUpdateScores(data);
-                if (data.event === 'toggle_player_card') executeUpdatePlayerCard(data.color, data.cardIdx, data.isActive);
-                if (data.event === 'reset_rotation') executeResetRotation();
-            }
-        });
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {

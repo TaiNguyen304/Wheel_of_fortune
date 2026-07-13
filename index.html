@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập phòng chơi</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: sans-serif;
+            font-weight: bold !important;
+        }
+        body {
+            background-color: purple;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-card {
+            background: yellow;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        h2 {
+            text-align: center;
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        button:hover {
+            background-color: orange;
+        }
+        .error-msg {
+            color: red;
+            text-align: center;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <h2>ĐĂNG NHẬP</h2>
+        <select id="playerSelect">
+            <option value="Player1">Player 1</option>
+            <option value="Player2">Player 2</option>
+            <option value="Player3">Player 3</option>
+        </select>
+        <input type="text" id="roomIdInput" placeholder="Mã phòng (6 chữ số)" maxlength="6">
+        <input type="password" id="passwordInput" placeholder="Mật khẩu (4 chữ số)" maxlength="4">
+        <button onclick="handleLogin()">Xác nhận</button>
+        <div id="errorMsg" class="error-msg"></div>
+    </div>
+
+    <script>
+        // CẤU HÌNH SUPABASE TRONG ĐÂY
+        var supabaseUrl = 'https://vjwwbzjzcbtkksehwfll.supabase.co';
+        var supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd3diemp6Y2J0a2tzZWh3ZmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDIyOTYsImV4cCI6MjA5NTUxODI5Nn0.Zcn4hvlLtRirM-SPGrFvu3ivu8RYF9WngvbxCMCGfh4';
+        var supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function handleLogin() {
+            const player = document.getElementById('playerSelect').value;
+            const roomId = document.getElementById('roomIdInput').value.trim();
+            const password = document.getElementById('passwordInput').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.innerText = '';
+
+            if (!roomId || !password) {
+                errorMsg.innerText = "Vui lòng nhập đầy đủ thông tin!";
+                return;
+            }
+
+            try {
+                // Lấy thông tin phòng từ bảng game_rooms
+                const { data, error } = await supabase
+                    .from('game_rooms')
+                    .select('*')
+                    .eq('room_id', roomId)
+                    .single();
+
+                if (error || !data) {
+                    errorMsg.innerText = "Mã phòng không tồn tại!";
+                    return;
+                }
+
+                // Xác định cột mật khẩu tương ứng của Player
+                let correctPassword = '';
+                if (player === 'Player1') correctPassword = data.p1_pass;
+                else if (player === 'Player2') correctPassword = data.p2_pass;
+                else if (player === 'Player3') correctPassword = data.p3_pass;
+
+                if (password === correctPassword) {
+                    // Chuyển sang trang Player tương ứng kèm mã phòng và token mật khẩu để thẩm định
+                    window.location.href = `${player}.html?roomid=${roomId}&auth=${password}`;
+                } else {
+                    errorMsg.innerText = "Mật khẩu không chính xác!";
+                }
+            } catch (err) {
+                errorMsg.innerText = "Có lỗi xảy ra kết nối hệ thống!";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -158,6 +158,16 @@
 </head>
 
 <body>
+
+    <div class="section">
+        <h2>Tạo mã phòng và mật khẩu</h2>
+        <div class="flex-row">
+            <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
+        </div>
+        <div id="roomCreateResult" style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;"></div>
+        <div id="currentRoomInfo" style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
+        <div id="roomError" style="margin-top: 10px; color: red;"></div>
+    </div>
 
     <div class="section">
         <h2>Điều khiển Nón</h2>
@@ -360,38 +370,229 @@
         var supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd3diemp6Y2J0a2tzZWh3ZmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDIyOTYsImV4cCI6MjA5NTUxODI5Nn0.Zcn4hvlLtRirM-SPGrFvu3ivu8RYF9WngvbxCMCGfh4';
         var supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-        const channel = supabase.channel('wheel_room', {
-            config: { broadcast: { self: true } }
-        });
-        channel.on('broadcast', { event: 'spin_wheel' }, function (payload) {
-            const targetRot = payload.payload?.targetRot;
-            if (targetRot !== undefined && targetRot !== null && !isNaN(targetRot)) {
-                currentRotation = targetRot;
-            }
-        });
-        channel.subscribe();
+        const urlParams = new URLSearchParams(window.location.search);
+        let roomId = urlParams.get('roomid');
+        let channel = null;
 
-        let currentRotation = 262.5;
-        let currentWheelType = 'normal';
+        function generateDigits(length) {
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += Math.floor(Math.random() * 10).toString();
+            }
+            return result;
+        }
+
+        function showRoomError(msg) {
+            document.getElementById('roomError').innerText = msg || '';
+        }
+
+        function renderCurrentRoomInfo(info) {
+            const el = document.getElementById('currentRoomInfo');
+            if (!info || !info.room_id) {
+                el.style.display = 'block';
+                el.innerHTML = '<strong>Chưa chọn phòng.</strong> Tạo phòng mới hoặc truy cập Controller.html?roomid=MÃ_PHÒNG';
+                return;
+            }
+            const rid = info.room_id;
+            el.style.display = 'block';
+            el.innerHTML =
+                '<strong>Phòng hiện tại:</strong> ' + rid + '<br>' +
+                'Player 1: <strong>' + info.p1_pass + '</strong> &nbsp;|&nbsp; ' +
+                'Player 2: <strong>' + info.p2_pass + '</strong> &nbsp;|&nbsp; ' +
+                'Player 3: <strong>' + info.p3_pass + '</strong><br>' +
+                '<a href="Wheel.html?roomid=' + rid + '" target="_blank">Wheel</a>' +
+                ' &nbsp;|&nbsp; <a href="Sub_Wheel.html?roomid=' + rid + '" target="_blank">Sub_Wheel</a>';
+        }
+
+        async function loadRoomInfo() {
+            if (!roomId) {
+                renderCurrentRoomInfo(null);
+                return;
+            }
+            const { data, error } = await supabase
+                .from('game_rooms')
+                .select('room_id, p1_pass, p2_pass, p3_pass')
+                .eq('room_id', roomId)
+                .single();
+
+            if (error || !data) {
+                showRoomError('Không tìm thấy thông tin phòng!');
+                renderCurrentRoomInfo({ room_id: roomId, p1_pass: '---', p2_pass: '---', p3_pass: '---' });
+                return;
+            }
+            renderCurrentRoomInfo(data);
+        }
+
+        async function createRoom() {
+            showRoomError('');
+            const newRoomId = generateDigits(6);
+            const p1 = generateDigits(4);
+            const p2 = generateDigits(4);
+            const p3 = generateDigits(4);
+
+            const { error: roomError } = await supabase.from('game_rooms').insert({
+                room_id: newRoomId,
+                p1_pass: p1,
+                p2_pass: p2,
+                p3_pass: p3
+            });
+
+            if (roomError) {
+                showRoomError('Không thể tạo phòng: ' + roomError.message);
+                return;
+            }
+
+            const defaultScores = {
+                redRound: 0, redTotal: 0,
+                yellowRound: 0, yellowTotal: 0,
+                blueRound: 0, blueTotal: 0
+            };
+            const defaultCards = {
+                red: Array(12).fill(false),
+                yellow: Array(12).fill(false),
+                blue: Array(12).fill(false)
+            };
+
+            await supabase.from('game_room_state').insert({
+                room_id: newRoomId,
+                wheel_state: {},
+                scores: defaultScores,
+                player_cards: defaultCards,
+                controller_rotation: 262.5
+            });
+
+            roomId = newRoomId;
+            history.replaceState(null, '', 'Controller.html?roomid=' + newRoomId);
+
+            document.getElementById('roomCreateResult').style.display = 'none';
+            showRoomError('');
+            renderCurrentRoomInfo({
+                room_id: newRoomId,
+                p1_pass: p1,
+                p2_pass: p2,
+                p3_pass: p3
+            });
+
+            initChannel();
+            loadRoomState().then(function () {
+                syncScoresToWheel(false);
+            });
+        }
+
+        async function loadRoomState() {
+            if (!roomId) return;
+            const { data, error } = await supabase
+                .from('game_room_state')
+                .select('*')
+                .eq('room_id', roomId)
+                .single();
+
+            if (error || !data) return;
+
+            if (data.scores) {
+                globalScores = Object.assign(globalScores, data.scores);
+            }
+            if (data.player_cards) {
+                playerCardsState = Object.assign(playerCardsState, data.player_cards);
+                ['red', 'yellow', 'blue'].forEach(function (color) {
+                    if (playerCardsState[color]) {
+                        playerCardsState[color].forEach(function (isActive, idx) {
+                            const btn = document.getElementById('btn-card-' + color + '-' + idx);
+                            if (btn && isActive) btn.classList.add('active-status');
+                        });
+                    }
+                });
+            }
+            if (data.wheel_state && data.wheel_state.currentRotation !== undefined && data.wheel_state.currentRotation !== null) {
+                currentRotation = parseFloat(data.wheel_state.currentRotation);
+            } else if (data.controller_rotation !== undefined && data.controller_rotation !== null) {
+                currentRotation = parseFloat(data.controller_rotation);
+            }
+            syncScoresToWheel(false);
+        }
+
+        async function syncRotationFromWheel() {
+            if (!roomId) return;
+            const { data } = await supabase
+                .from('game_room_state')
+                .select('wheel_state')
+                .eq('room_id', roomId)
+                .single();
+            if (data && data.wheel_state && data.wheel_state.currentRotation !== undefined && data.wheel_state.currentRotation !== null) {
+                currentRotation = parseFloat(data.wheel_state.currentRotation);
+            }
+        }
+
+        async function saveRoomState() {
+            if (!roomId) return;
+            await supabase.from('game_room_state').upsert({
+                room_id: roomId,
+                scores: globalScores,
+                player_cards: playerCardsState,
+                controller_rotation: currentRotation,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'room_id' });
+        }
+
+        const MIN_SPIN_ROTATIONS = 5;
+
+        function computeSpinTarget(startRot, duration, randomOffset, minRotations) {
+            const minRot = (minRotations || MIN_SPIN_ROTATIONS) * 360;
+            let finalDuration = parseFloat(duration);
+            if (isNaN(finalDuration) || finalDuration <= 0) finalDuration = 5;
+            const durationRot = finalDuration * 360;
+            const totalExtra = Math.max(minRot, durationRot) + (randomOffset || 0);
+            const start = parseFloat(startRot);
+            return { startRot: start, targetRot: start + totalExtra, finalDuration: finalDuration };
+        }
+
+        function updateControllerRotationFromSpin(payload) {
+            if (!payload || payload.startRot === undefined || payload.startRot === null) return;
+            const spin = computeSpinTarget(payload.startRot, payload.duration, payload.randomOffset, payload.minRotations);
+            currentRotation = spin.targetRot;
+            saveRoomState();
+        }
+
+        function initChannel() {
+            if (!roomId || channel) return;
+            channel = supabase.channel('wheel_room_' + roomId, {
+                config: { broadcast: { self: true } }
+            });
+            channel.on('broadcast', { event: 'spin_wheel' }, function (payload) {
+                updateControllerRotationFromSpin(payload.payload);
+            }).on('broadcast', { event: 'reset_rotation' }, function () {
+                currentRotation = 262.5;
+                saveRoomState();
+            }).on('broadcast', { event: 'find_highest' }, function (payload) {
+                if (payload.payload && payload.payload.targetRot !== undefined && payload.payload.targetRot !== null) {
+                    currentRotation = parseFloat(payload.payload.targetRot);
+                    saveRoomState();
+                }
+            });
+            channel.subscribe();
+        }
 
         function sendEvent(eventName, payloadData) {
+            if (!roomId || !channel) {
+                showRoomError('Vui lòng chọn phòng trước khi điều khiển!');
+                return;
+            }
             channel.send({
                 type: 'broadcast',
                 event: eventName,
                 payload: payloadData
             });
-            localStorage.setItem('local_wheel_cmd', JSON.stringify({
-                event: eventName,
-                ...payloadData
-            }));
         }
 
+        let currentRotation = 262.5;
+
         function toggleWheel(type, isShow) {
-            if (isShow) currentWheelType = type;
             sendEvent('toggle_wheel', { type, isShow });
         }
 
-        function spinWheel() {
+        async function spinWheel() {
+            await syncRotationFromWheel();
+
             const timeInput = document.getElementById('spinTime').value;
             let duration = parseInt(timeInput);
             if (isNaN(duration) || duration < 5 || duration > 20) {
@@ -399,23 +600,21 @@
                 document.getElementById('spinTime').value = duration;
             }
 
-            const extraSpins = duration * 360;
+            const startRot = currentRotation;
             const randomOffset = Math.floor(Math.random() * 360);
             const startTime = Date.now();
+            const spin = computeSpinTarget(startRot, duration, randomOffset, MIN_SPIN_ROTATIONS);
 
-            // TÍNH TOÁN GÓC ĐÍCH TUYỆT ĐỐI NGAY TẠI CONTROLLER
-            const targetRot = currentRotation + extraSpins + randomOffset;
+            currentRotation = spin.targetRot;
 
-            // Cập nhật lại góc hiện tại của Controller cho các lần quay tiếp theo
-            currentRotation = targetRot;
-
-            // Gửi sự kiện spin_wheel kèm theo targetRot (Góc đích tuyệt đối)
             sendEvent('spin_wheel', {
-                duration,
-                randomOffset,
-                startTime,
-                targetRot: targetRot // Truyền tham số góc đích tuyệt đối sang các màn hình
+                duration: spin.finalDuration,
+                randomOffset: randomOffset,
+                startTime: startTime,
+                startRot: startRot,
+                minRotations: MIN_SPIN_ROTATIONS
             });
+            saveRoomState();
         }
 
         function setPointer(pointerName, state) {
@@ -450,8 +649,6 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [baseWedges[i], baseWedges[j]] = [baseWedges[j], baseWedges[i]];
             }
-
-            currentSpecialWedges = baseWedges;
 
             // Gửi sự kiện cập nhật cấu trúc mảng nón phụ sang hệ thống Realtime
             sendEvent('shuffle_special', { wedges: baseWedges });
@@ -542,46 +739,11 @@
             });
         }
 
-        function formatWedgeValue(value) {
-            return typeof value === 'number' ? value.toLocaleString() + " điểm" : value;
-        }
-
-        function getWedgeIndexAtRotation(rotation) {
-            const angleAtTop = normalizeAngle(360 - normalizeAngle(rotation));
-            let wedgeIndex = Math.floor(angleAtTop / 15);
-            if (wedgeIndex < 0) wedgeIndex = 0;
-            if (wedgeIndex > 23) wedgeIndex = 23;
-            return wedgeIndex;
-        }
-
-        function showValue() {
-            if (!currentSpecialWedges || currentSpecialWedges.length === 0) return;
-            const wedgeIndex = getWedgeIndexAtRotation(currentRotation);
-            const displayText = formatWedgeValue(currentSpecialWedges[wedgeIndex]);
-            sendEvent('show_value', { wedgeIndex, displayText });
-        }
+        function showValue() { sendEvent('show_value', {}); }
         function hideValue() { sendEvent('hide_value', {}); }
-        function normalizeAngle(deg) {
-            return ((deg % 360) + 360) % 360;
-        }
-
         function findHighestWedge() {
-            if (!currentSpecialWedges || currentSpecialWedges.length === 0) return;
-
-            const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace('x', '')) : v;
-            const numericValues = currentSpecialWedges.map(parseVal);
-            const maxVal = Math.max(...numericValues);
-            const targetIndex = numericValues.indexOf(maxVal);
-            const targetCenterAngle = (targetIndex * 15) + 7.5;
-            const currentNormalized = normalizeAngle(currentRotation);
-            let targetAngleDiff = (360 - targetCenterAngle) - currentNormalized;
-            if (targetAngleDiff <= 0) targetAngleDiff += 360;
-
             const startTime = Date.now();
-            const targetRot = currentRotation + targetAngleDiff + 1080;
-            currentRotation = targetRot;
-
-            sendEvent('find_highest', { startTime, targetRot, targetIndex });
+            sendEvent('find_highest', { startTime });
         }
 
         const itemsList = [
@@ -630,7 +792,8 @@
             input.value = Number(value).toLocaleString('vi-VN');
         }
 
-        function syncScoresToWheel() {
+        function syncScoresToWheel(saveToDb) {
+            if (saveToDb !== false) saveRoomState();
             sendEvent('sync_scores', globalScores);
             document.getElementById('ctrl-red-round-box').innerText = "Điểm Vòng: " + globalScores.redRound.toLocaleString('vi-VN');
             document.getElementById('ctrl-red-total-box').innerText = "Điểm Tổng: " + globalScores.redTotal.toLocaleString('vi-VN');
@@ -679,6 +842,7 @@
             else btn.classList.remove('active-status');
 
             sendEvent('toggle_player_card', { color, cardIdx, isActive: currentState });
+            saveRoomState();
         }
 
         function initPlayerCardControls(color) {
@@ -694,14 +858,10 @@
             });
         }
 
-        initPlayerCardControls('red');
-        initPlayerCardControls('yellow');
-        initPlayerCardControls('blue');
-        syncScoresToWheel();
-
         function resetWheelRotation() {
             currentRotation = 262.5;
             sendEvent('reset_rotation', {});
+            saveRoomState();
         }
 
         function setTurn(target, state) {
@@ -711,6 +871,16 @@
         function toggleSpinBtn(target, state) {
             sendEvent('toggle_spin_btn', { target, state });
         }
+
+        initPlayerCardControls('red');
+        initPlayerCardControls('yellow');
+        initPlayerCardControls('blue');
+
+        loadRoomInfo();
+        initChannel();
+        loadRoomState().then(function () {
+            syncScoresToWheel(false);
+        });
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
