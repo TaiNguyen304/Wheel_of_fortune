@@ -374,6 +374,10 @@
         let roomId = urlParams.get('roomid');
         let channel = null;
 
+        let globalTurns = { red: false, yellow: false, blue: false };
+        let globalSpinButtons = { red: false, yellow: false, blue: false };
+        let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
+
         function generateDigits(length) {
             let result = '';
             for (let i = 0; i < length; i++) {
@@ -397,11 +401,14 @@
             el.style.display = 'block';
             el.innerHTML =
                 '<strong>Phòng hiện tại:</strong> ' + rid + '<br>' +
-                'Player 1: <strong>' + info.p1_pass + '</strong> &nbsp;|&nbsp; ' +
-                'Player 2: <strong>' + info.p2_pass + '</strong> &nbsp;|&nbsp; ' +
-                'Player 3: <strong>' + info.p3_pass + '</strong><br>' +
+                'Player 1 (Đỏ): <strong>' + info.p1_pass + '</strong> &nbsp;|&nbsp; ' +
+                'Player 2 (Vàng): <strong>' + info.p2_pass + '</strong> &nbsp;|&nbsp; ' +
+                'Player 3 (Xanh): <strong>' + info.p3_pass + '</strong><br>' +
                 '<a href="Wheel.html?roomid=' + rid + '" target="_blank">Wheel</a>' +
-                ' &nbsp;|&nbsp; <a href="Sub_Wheel.html?roomid=' + rid + '" target="_blank">Sub_Wheel</a>';
+                ' &nbsp;|&nbsp; <a href="Sub_Wheel.html?roomid=' + rid + '" target="_blank">Sub_Wheel</a>' +
+                ' &nbsp;|&nbsp; <a href="Player1.html?roomid=' + rid + '&auth=' + info.p1_pass + '" target="_blank">Player 1 (Đỏ)</a>' +
+                ' &nbsp;|&nbsp; <a href="Player2.html?roomid=' + rid + '&auth=' + info.p2_pass + '" target="_blank">Player 2 (Vàng)</a>' +
+                ' &nbsp;|&nbsp; <a href="Player3.html?roomid=' + rid + '&auth=' + info.p3_pass + '" target="_blank">Player 3 (Xanh)</a>';
         }
 
         async function loadRoomInfo() {
@@ -455,7 +462,20 @@
 
             await supabase.from('game_room_state').insert({
                 room_id: newRoomId,
-                wheel_state: {},
+                wheel_state: {
+                    currentRotation: 262.5,
+                    isSpecialMode: false,
+                    specialWedges: [],
+                    wheelDisplay: 'block',
+                    wheelBg: "url('./Nón.png')",
+                    zoomed: false,
+                    popupDisplay: 'none',
+                    popupText: '0 điểm',
+                    itemsState: {},
+                    turns: { red: false, yellow: false, blue: false },
+                    spinButtons: { red: false, yellow: false, blue: false },
+                    pointerLights: { red: 'off', yellow: 'off', blue: 'off' }
+                },
                 scores: defaultScores,
                 player_cards: defaultCards,
                 controller_rotation: 262.5
@@ -477,6 +497,27 @@
             loadRoomState().then(function () {
                 syncScoresToWheel(false);
             });
+        }
+
+        async function updateWheelStateFields(updates) {
+            if (!roomId) return;
+            const { data } = await supabase
+                .from('game_room_state')
+                .select('wheel_state')
+                .eq('room_id', roomId)
+                .single();
+            
+            let currentState = {};
+            if (data && data.wheel_state) {
+                currentState = data.wheel_state;
+            }
+            
+            const newState = Object.assign({}, currentState, updates);
+            
+            await supabase
+                .from('game_room_state')
+                .update({ wheel_state: newState })
+                .eq('room_id', roomId);
         }
 
         async function loadRoomState() {
@@ -508,6 +549,18 @@
             } else if (data.controller_rotation !== undefined && data.controller_rotation !== null) {
                 currentRotation = parseFloat(data.controller_rotation);
             }
+
+            if (data.wheel_state) {
+                if (data.wheel_state.turns) {
+                    globalTurns = Object.assign(globalTurns, data.wheel_state.turns);
+                }
+                if (data.wheel_state.spinButtons) {
+                    globalSpinButtons = Object.assign(globalSpinButtons, data.wheel_state.spinButtons);
+                }
+                if (data.wheel_state.pointerLights) {
+                    globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
+                }
+            }
             syncScoresToWheel(false);
         }
 
@@ -525,13 +578,12 @@
 
         async function saveRoomState() {
             if (!roomId) return;
-            await supabase.from('game_room_state').upsert({
-                room_id: roomId,
+            await supabase.from('game_room_state').update({
                 scores: globalScores,
                 player_cards: playerCardsState,
                 controller_rotation: currentRotation,
                 updated_at: new Date().toISOString()
-            }, { onConflict: 'room_id' });
+            }).eq('room_id', roomId);
         }
 
         const MIN_SPIN_ROTATIONS = 5;
@@ -550,7 +602,7 @@
             if (!payload || payload.startRot === undefined || payload.startRot === null) return;
             const spin = computeSpinTarget(payload.startRot, payload.duration, payload.randomOffset, payload.minRotations);
             currentRotation = spin.targetRot;
-            saveRoomState();
+            updateWheelStateFields({ currentRotation: currentRotation });
         }
 
         function initChannel() {
@@ -562,11 +614,11 @@
                 updateControllerRotationFromSpin(payload.payload);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 currentRotation = 262.5;
-                saveRoomState();
+                updateWheelStateFields({ currentRotation: 262.5 });
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
                 if (payload.payload && payload.payload.targetRot !== undefined && payload.payload.targetRot !== null) {
                     currentRotation = parseFloat(payload.payload.targetRot);
-                    saveRoomState();
+                    updateWheelStateFields({ currentRotation: currentRotation });
                 }
             });
             channel.subscribe();
@@ -614,15 +666,18 @@
                 startRot: startRot,
                 minRotations: MIN_SPIN_ROTATIONS
             });
-            saveRoomState();
+            updateWheelStateFields({ currentRotation: currentRotation });
         }
 
         function setPointer(pointerName, state) {
             sendEvent('pointer_light', { pointerName, state });
+            globalPointerLights[pointerName] = state;
+            updateWheelStateFields({ pointerLights: globalPointerLights });
         }
 
         function zoomPointer(type) {
             sendEvent('zoom_pointer', { type });
+            updateWheelStateFields({ zoomed: (type === 'in') });
         }
 
         function toggleItem(itemName, isShow) {
@@ -862,14 +917,31 @@
             currentRotation = 262.5;
             sendEvent('reset_rotation', {});
             saveRoomState();
+            updateWheelStateFields({ currentRotation: 262.5, popupDisplay: 'none' });
         }
 
         function setTurn(target, state) {
             sendEvent('set_turn', { target, state });
+            if (target === 'all') {
+                globalTurns.red = state;
+                globalTurns.yellow = state;
+                globalTurns.blue = state;
+            } else {
+                globalTurns[target] = state;
+            }
+            updateWheelStateFields({ turns: globalTurns });
         }
 
         function toggleSpinBtn(target, state) {
             sendEvent('toggle_spin_btn', { target, state });
+            if (target === 'all') {
+                globalSpinButtons.red = state;
+                globalSpinButtons.yellow = state;
+                globalSpinButtons.blue = state;
+            } else {
+                globalSpinButtons[target] = state;
+            }
+            updateWheelStateFields({ spinButtons: globalSpinButtons });
         }
 
         initPlayerCardControls('red');

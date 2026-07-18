@@ -618,10 +618,13 @@
 
         function updateIndicator(color, isActive) {
             const ind = document.getElementById('ind-' + color);
-            if (isActive) ind.classList.add('active-' + color);
-            else ind.classList.remove('active-' + color);
+            if (ind) {
+                if (isActive) ind.classList.add('active-' + color);
+                else ind.classList.remove('active-' + color);
+            }
         }
 
+        // LẮNG NGHE TÍN HIỆU REALTIME
         // LẮNG NGHE TÍN HIỆU REALTIME
         function formatWedgeValue(value) {
             return typeof value === 'number' ? value.toLocaleString() + " điểm" : value;
@@ -718,6 +721,73 @@
             }
 
             animationFrameId = requestAnimationFrame(updateFindHighestProgress);
+        }
+
+        async function loadWheelState() {
+            if (!roomId) return;
+            const { data, error } = await supabase
+                .from('game_room_state')
+                .select('wheel_state')
+                .eq('room_id', roomId)
+                .single();
+            if (data && data.wheel_state) {
+                applyWheelState(data.wheel_state);
+            }
+        }
+
+        function applyWheelState(state) {
+            if (!state) return;
+            currentRotation = state.currentRotation || 0;
+            isSpecialMode = state.isSpecialMode || false;
+            specialWedges = state.specialWedges || [];
+
+            wheelGraphic.style.transition = 'none';
+            wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
+            wheelGraphic.style.display = state.wheelDisplay || 'block';
+            wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
+            activeWheelType = state.wheelBg ? (state.wheelBg.includes('Nón Phụ') ? 'sub_wheel' : (state.wheelBg.includes('Đặc Biệt') ? 'special' : 'normal')) : 'normal';
+
+            specialValuePopup.style.display = state.popupDisplay || 'none';
+            specialValuePopup.innerText = state.popupText || '0 điểm';
+
+            if (state.itemsState) {
+                Object.keys(state.itemsState).forEach(itemName => {
+                    const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                    const el = document.getElementById(targetId);
+                    if (el) el.style.display = state.itemsState[itemName];
+                });
+            }
+
+            // Sync pointer lights
+            if (state.pointerLights) {
+                ['red', 'yellow', 'blue'].forEach(pName => {
+                    const pointerObj = document.getElementById('pointer-' + pName);
+                    if (pointerObj) {
+                        const s = state.pointerLights[pName];
+                        if (s === 'on') {
+                            if (pName === 'red') pointerObj.style.setProperty('--p-color', '#FF0000');
+                            if (pName === 'yellow') pointerObj.style.setProperty('--p-color', '#FFFF00');
+                            if (pName === 'blue') pointerObj.style.setProperty('--p-color', '#0000FF');
+                        } else {
+                            pointerObj.style.setProperty('--p-color', '#FFFFFF');
+                        }
+                    }
+                });
+            }
+
+            // Sync turn indicators
+            if (state.turns) {
+                ['red', 'yellow', 'blue'].forEach(color => {
+                    updateIndicator(color, state.turns[color]);
+                });
+            }
+
+            // Sync spin buttons
+            if (state.spinButtons) {
+                const myState = state.spinButtons[MY_COLOR];
+                if (myState) unlockLocalSpin();
+                else lockLocalSpin();
+            }
         }
 
         async function verifyAndInitChannel() {
@@ -831,6 +901,7 @@
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
                     channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
+                    loadWheelState();
                 }
             });
             } catch (e) { console.error("Supabase Error:", e); }

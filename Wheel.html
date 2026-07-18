@@ -521,11 +521,10 @@
         async function saveWheelState() {
             if (isSpinningNow || !roomId) return;
             const state = buildWheelState();
-            await supabase.from('game_room_state').upsert({
-                room_id: roomId,
+            await supabase.from('game_room_state').update({
                 wheel_state: state,
                 updated_at: new Date().toISOString()
-            }, { onConflict: 'room_id' });
+            }).eq('room_id', roomId);
         }
 
         function applyWheelState(state) {
@@ -558,11 +557,27 @@
         async function loadWheelState() {
             const { data } = await supabase
                 .from('game_room_state')
-                .select('wheel_state')
+                .select('wheel_state, scores, player_cards')
                 .eq('room_id', roomId)
                 .single();
-            if (data && data.wheel_state) {
-                try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
+            if (data) {
+                if (data.wheel_state) {
+                    try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
+                }
+                if (data.scores) {
+                    try { executeUpdateScores(data.scores); } catch (e) { console.error(e); }
+                }
+                if (data.player_cards) {
+                    try {
+                        ['red', 'yellow', 'blue'].forEach(color => {
+                            if (data.player_cards[color]) {
+                                data.player_cards[color].forEach((isActive, cardIdx) => {
+                                    executeUpdatePlayerCard(color, cardIdx, isActive);
+                                });
+                            }
+                        });
+                    } catch (e) { console.error(e); }
+                }
             }
         }
 
@@ -589,9 +604,8 @@
                 isSpecialMode = true;
                 activeWheelType = 'special';
             } else if (type === 'sub_wheel') {
-                // Cập nhật đường dẫn ảnh nón phụ mới theo thiết kế yêu cầu
                 wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
-                isSpecialMode = true; // Kế thừa toàn bộ cơ cấu và thuộc tính xử lý điểm của vòng đặc biệt
+                isSpecialMode = true;
                 activeWheelType = 'sub_wheel';
             } else {
                 wheelGraphic.style.backgroundImage = "url('./Nón.png')";
