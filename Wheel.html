@@ -413,6 +413,7 @@
         let specialWedges = [];
         let isSpinningNow = false;
         let activeWheelType = 'normal';
+        let pointerLightsState = { red: 'off', yellow: 'off', blue: 'off' };
 
         function normalizeAngle(deg) {
             return ((deg % 360) + 360) % 360;
@@ -508,6 +509,7 @@
                 zoomed: wheelArea.classList.contains('zoomed'),
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
+                pointerLights: pointerLightsState,
                 itemsState: {}
             };
             Object.keys(itemsPlacementConfig).forEach(itemName => {
@@ -520,9 +522,23 @@
 
         async function saveWheelState() {
             if (isSpinningNow || !roomId) return;
-            const state = buildWheelState();
+            const localState = buildWheelState();
+            
+            const { data } = await supabase
+                .from('game_room_state')
+                .select('wheel_state')
+                .eq('room_id', roomId)
+                .single();
+            
+            let currentState = {};
+            if (data && data.wheel_state) {
+                currentState = data.wheel_state;
+            }
+            
+            const newState = Object.assign({}, currentState, localState);
+
             await supabase.from('game_room_state').update({
-                wheel_state: state,
+                wheel_state: newState,
                 updated_at: new Date().toISOString()
             }).eq('room_id', roomId);
         }
@@ -550,6 +566,14 @@
                     const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
                     const el = document.getElementById(targetId);
                     if (el) el.style.display = state.itemsState[itemName];
+                });
+            }
+
+            // Sync pointer lights
+            if (state.pointerLights) {
+                pointerLightsState = Object.assign({}, state.pointerLights);
+                ['red', 'yellow', 'blue'].forEach(pName => {
+                    executePointerLight(pName, pointerLightsState[pName]);
                 });
             }
         }
@@ -707,6 +731,7 @@
         function executePointerLight(pointerName, state) {
             const pointerObj = document.getElementById('pointer-' + pointerName);
             if (!pointerObj) return;
+            pointerLightsState[pointerName] = state;
             if (state === 'on') {
                 if (pointerName === 'red') pointerObj.style.setProperty('--p-color', '#FF0000');
                 if (pointerName === 'yellow') pointerObj.style.setProperty('--p-color', '#FFFF00');
@@ -863,6 +888,7 @@
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
                     channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
+                    loadWheelState();
                 }
             });
 
@@ -882,7 +908,6 @@
                 specialWedges = payload.payload.wedges;
                 wheelGraphic.style.transition = 'none';
                 wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
-                saveWheelState();
             });
 
         } catch (e) { }
