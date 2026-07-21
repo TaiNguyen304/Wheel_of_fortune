@@ -15,15 +15,14 @@
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background: purple;
             color: white;
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            gap: 40px;
         }
 
         .wheel-area {
@@ -35,8 +34,10 @@
             height: 600px;
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             transform-origin: center top;
-            margin-left: 20px;
-            flex-shrink: 0;
+        }
+
+        .wheel-area.zoomed {
+            transform: scale(2) translateY(50px);
         }
 
         .wheel-container {
@@ -59,6 +60,7 @@
             position: relative;
         }
 
+        /* KHUNG HÌNH CHỮ NHẬT TRUNG TÂM */
         #specialValuePopup {
             position: absolute;
             top: 50%;
@@ -199,86 +201,6 @@
         #pointer-blue {
             --p-color: #FFFFFF;
         }
-
-        .players-scoreboard {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            max-width: 650px;
-        }
-
-        .player-row {
-            background: rgba(255, 255, 255, 0.08);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .score-boxes {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 12px;
-        }
-
-        .score-box {
-            flex: 1;
-            padding: 12px;
-            font-size: 22px;
-            text-align: center;
-            border-radius: 8px;
-            border: 2px solid white;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-        }
-
-        .row-red .score-box {
-            background: #ff0000;
-            color: #ffffff;
-        }
-
-        .row-yellow .score-box {
-            background: #ffff00;
-            color: #000000;
-            border-color: #000000;
-        }
-
-        .row-blue .score-box {
-            background: #0000ff;
-            color: #ffffff;
-        }
-
-        .cards-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .cards-line {
-            display: flex;
-            gap: 6px;
-            justify-content: space-between;
-        }
-
-        .card-slot {
-            flex: 1;
-            padding: 8px 4px;
-            font-size: 11px;
-            text-align: center;
-            border-radius: 5px;
-            background: #000000;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        .card-slot.active {
-            background: green !important;
-            color: white !important;
-            border-color: #000000;
-        }
     </style>
 </head>
 
@@ -286,11 +208,14 @@
 
     <div class="wheel-area" id="wheelArea">
         <div class="wheel-container" id="wheelContainer">
+
             <div id="wheelGraphic">
                 <div class="items-ring" id="itemsRing"></div>
                 <div class="dots-ring" id="dotsRing"></div>
             </div>
+
             <div id="specialValuePopup">0 điểm</div>
+
             <div class="pointer-wrapper wrapper-red">
                 <div class="pointer-body" id="pointer-red">
                     <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
@@ -299,6 +224,7 @@
                     </svg>
                 </div>
             </div>
+
             <div class="pointer-wrapper wrapper-yellow">
                 <div class="pointer-body" id="pointer-yellow">
                     <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
@@ -307,89 +233,13 @@
                     </svg>
                 </div>
             </div>
+
             <div class="pointer-wrapper wrapper-blue">
                 <div class="pointer-body" id="pointer-blue">
                     <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
                         <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
                             stroke="white" stroke-width="2" stroke-linejoin="round" />
                     </svg>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="players-scoreboard">
-        <div class="player-row row-red" id="row-red">
-            <div class="score-boxes">
-                <div class="score-box" id="display-red-round">0</div>
-                <div class="score-box" id="display-red-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
-                </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="player-row row-yellow" id="row-yellow">
-            <div class="score-boxes">
-                <div class="score-box" id="display-yellow-round">0</div>
-                <div class="score-box" id="display-yellow-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
-                </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="player-row row-blue" id="row-blue">
-            <div class="score-boxes">
-                <div class="score-box" id="display-blue-round">0</div>
-                <div class="score-box" id="display-blue-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
-                </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
                 </div>
             </div>
         </div>
@@ -412,7 +262,7 @@
         let isSpecialMode = false;
         let specialWedges = [];
         let isSpinningNow = false;
-        let activeWheelType = 'normal';
+        let activeWheelType = 'sub_wheel';
         let pointerLightsState = { red: 'off', yellow: 'off', blue: 'off' };
 
         function normalizeAngle(deg) {
@@ -427,7 +277,7 @@
         }
 
         function inferWheelTypeFromBg(bg) {
-            if (!bg) return 'normal';
+            if (!bg) return 'sub_wheel';
             if (bg.includes('Nón Phụ')) return 'sub_wheel';
             if (bg.includes('Đặc Biệt')) return 'special';
             return 'normal';
@@ -537,10 +387,11 @@
             
             const newState = Object.assign({}, currentState, localState);
 
-            await supabase.from('game_room_state').update({
+            await supabase.from('game_room_state').upsert({
+                room_id: roomId,
                 wheel_state: newState,
                 updated_at: new Date().toISOString()
-            }).eq('room_id', roomId);
+            }, { onConflict: 'room_id' });
         }
 
         function applyWheelState(state) {
@@ -581,27 +432,11 @@
         async function loadWheelState() {
             const { data } = await supabase
                 .from('game_room_state')
-                .select('wheel_state, scores, player_cards')
+                .select('wheel_state')
                 .eq('room_id', roomId)
                 .single();
-            if (data) {
-                if (data.wheel_state) {
-                    try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
-                }
-                if (data.scores) {
-                    try { executeUpdateScores(data.scores); } catch (e) { console.error(e); }
-                }
-                if (data.player_cards) {
-                    try {
-                        ['red', 'yellow', 'blue'].forEach(color => {
-                            if (data.player_cards[color]) {
-                                data.player_cards[color].forEach((isActive, cardIdx) => {
-                                    executeUpdatePlayerCard(color, cardIdx, isActive);
-                                });
-                            }
-                        });
-                    } catch (e) { console.error(e); }
-                }
+            if (data && data.wheel_state) {
+                try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
             }
         }
 
@@ -628,8 +463,9 @@
                 isSpecialMode = true;
                 activeWheelType = 'special';
             } else if (type === 'sub_wheel') {
+                // Cập nhật đường dẫn ảnh cho màn hình phụ
                 wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
-                isSpecialMode = true;
+                isSpecialMode = true; // Kích hoạt biến trạng thái xử lý logic hiển thị popup và tính toán ô điểm
                 activeWheelType = 'sub_wheel';
             } else {
                 wheelGraphic.style.backgroundImage = "url('./Nón.png')";
@@ -652,7 +488,6 @@
             return { startRot: start, targetRot: start + totalExtra, finalDuration: finalDuration };
         }
 
-        // BIẾN TOÀN CỤC PHỤ TRÁCH THỰC HIỆN ĐỒNG BỘ MƯỢT MÀ THEO FRAME THỜI GIAN
         let animationFrameId = null;
 
         function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
@@ -683,7 +518,9 @@
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            const startTimestamp = startTime || Date.now();
+            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
+            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
+            const startTimestamp = Date.now();
             const durationMs = finalDuration * 1000;
 
             function easeOutQuint(t) {
@@ -793,9 +630,12 @@
 
             specialValuePopup.style.display = 'none';
 
-            const startTimestamp = startTime || Date.now();
+            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
+            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
+            const startTimestamp = Date.now();
             const durationMs = 4000;
 
+            // NÂNG CẤP: Hàm nội suy Quintic đồng bộ cho tính năng tìm ô cao nhất
             function easeOutQuint(t) {
                 return 1 - Math.pow(1 - t, 5);
             }
@@ -834,25 +674,6 @@
             animationFrameId = requestAnimationFrame(updateFindHighestProgress);
         }
 
-        function executeUpdateScores(scores) {
-            document.getElementById('display-red-round').innerText = scores.redRound.toLocaleString();
-            document.getElementById('display-red-total').innerText = scores.redTotal.toLocaleString();
-            document.getElementById('display-yellow-round').innerText = scores.yellowRound.toLocaleString();
-            document.getElementById('display-yellow-total').innerText = scores.yellowTotal.toLocaleString();
-            document.getElementById('display-blue-round').innerText = scores.blueRound.toLocaleString();
-            document.getElementById('display-blue-total').innerText = scores.blueTotal.toLocaleString();
-        }
-
-        function executeUpdatePlayerCard(color, cardIdx, isActive) {
-            const container = document.getElementById('row-' + color);
-            if (!container) return;
-            const slot = container.querySelector(`.card-slot[data-card="${cardIdx}"]`);
-            if (slot) {
-                if (isActive) slot.classList.add('active');
-                else slot.classList.remove('active');
-            }
-        }
-
         loadWheelState();
 
         try {
@@ -879,10 +700,6 @@
                 executeHideValue();
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
                 executeFindHighest(payload.payload.startTime, payload.payload.targetRot, payload.payload.targetIndex);
-            }).on('broadcast', { event: 'sync_scores' }, function (payload) {
-                executeUpdateScores(payload.payload);
-            }).on('broadcast', { event: 'toggle_player_card' }, function (payload) {
-                executeUpdatePlayerCard(payload.payload.color, payload.payload.cardIdx, payload.payload.isActive);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 executeResetRotation();
             }).subscribe((status) => {

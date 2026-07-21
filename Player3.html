@@ -583,7 +583,9 @@
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            const startTimestamp = startTime || Date.now();
+            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
+            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
+            const startTimestamp = Date.now();
             const durationMs = finalDuration * 1000;
 
             function easeOutQuint(t) {
@@ -624,7 +626,6 @@
             }
         }
 
-        // LẮNG NGHE TÍN HIỆU REALTIME
         // LẮNG NGHE TÍN HIỆU REALTIME
         function formatWedgeValue(value) {
             return typeof value === 'number' ? value.toLocaleString() + " điểm" : value;
@@ -685,7 +686,9 @@
 
             specialValuePopup.style.display = 'none';
 
-            const startTimestamp = startTime || Date.now();
+            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
+            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
+            const startTimestamp = Date.now();
             const durationMs = 4000;
 
             function easeOutQuint(t) {
