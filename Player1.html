@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -286,7 +286,7 @@
         }
 
         /* HOVER TẤT CẢ CÁC NÚT RA MÀU ORANGE CHỮ ĐẬM TRẮNG */
-        button:hover {
+        button:not(:disabled):hover {
             background: orange !important;
             color: white !important;
         }
@@ -811,102 +811,102 @@
 
             try {
                 channel.on('broadcast', { event: 'set_turn' }, function (payload) {
-                const target = payload.payload.target;
-                const state = payload.payload.state;
-                if (target === 'all') {
-                    updateIndicator('red', state);
-                    updateIndicator('yellow', state);
-                    updateIndicator('blue', state);
-                } else {
-                    updateIndicator(target, state);
-                }
-            }).on('broadcast', { event: 'toggle_spin_btn' }, function (payload) {
-                const target = payload.payload.target;
-                const state = payload.payload.state;
+                    const target = payload.payload.target;
+                    const state = payload.payload.state;
+                    if (target === 'all') {
+                        updateIndicator('red', state);
+                        updateIndicator('yellow', state);
+                        updateIndicator('blue', state);
+                    } else {
+                        updateIndicator(target, state);
+                    }
+                }).on('broadcast', { event: 'toggle_spin_btn' }, function (payload) {
+                    const target = payload.payload.target;
+                    const state = payload.payload.state;
 
-                // LOGIC CHỈNH SỬA THỨ 1: Xử lý khóa chéo người chơi khác khi một người được mở
-                if (target === 'all') {
-                    if (state) unlockLocalSpin();
-                    else lockLocalSpin();
-                } else {
-                    if (target === MY_COLOR) {
+                    // LOGIC CHỈNH SỬA THỨ 1: Xử lý khóa chéo người chơi khác khi một người được mở
+                    if (target === 'all') {
                         if (state) unlockLocalSpin();
                         else lockLocalSpin();
                     } else {
-                        // Nếu lệnh mở nút (state = true) dành cho người chơi khác, thì máy mình tự động khóa
-                        if (state === true) {
-                            lockLocalSpin();
+                        if (target === MY_COLOR) {
+                            if (state) unlockLocalSpin();
+                            else lockLocalSpin();
+                        } else {
+                            // Nếu lệnh mở nút (state = true) dành cho người chơi khác, thì máy mình tự động khóa
+                            if (state === true) {
+                                lockLocalSpin();
+                            }
                         }
                     }
-                }
-            }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
-                executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
-            }).on('broadcast', { event: 'toggle_wheel' }, function (payload) {
-                if (!payload.payload.isShow) {
-                    wheelGraphic.style.display = 'none';
-                    return;
-                }
-                wheelGraphic.style.display = 'block';
-                if (payload.payload.type === 'special') {
-                    wheelGraphic.style.backgroundImage = "url('./Nón Đặc Biệt.png')";
-                    isSpecialMode = true;
-                    activeWheelType = 'special';
-                } else if (payload.payload.type === 'sub_wheel') {
-                    wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
-                    isSpecialMode = true;
-                    activeWheelType = 'sub_wheel';
-                } else {
-                    wheelGraphic.style.backgroundImage = "url('./Nón.png')";
-                    isSpecialMode = false;
-                    activeWheelType = 'normal';
+                }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
+                    executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
+                }).on('broadcast', { event: 'toggle_wheel' }, function (payload) {
+                    if (!payload.payload.isShow) {
+                        wheelGraphic.style.display = 'none';
+                        return;
+                    }
+                    wheelGraphic.style.display = 'block';
+                    if (payload.payload.type === 'special') {
+                        wheelGraphic.style.backgroundImage = "url('./Nón Đặc Biệt.png')";
+                        isSpecialMode = true;
+                        activeWheelType = 'special';
+                    } else if (payload.payload.type === 'sub_wheel') {
+                        wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
+                        isSpecialMode = true;
+                        activeWheelType = 'sub_wheel';
+                    } else {
+                        wheelGraphic.style.backgroundImage = "url('./Nón.png')";
+                        isSpecialMode = false;
+                        activeWheelType = 'normal';
+                        specialValuePopup.style.display = 'none';
+                    }
+                }).on('broadcast', { event: 'pointer_light' }, function (payload) {
+                    const pName = payload.payload.pointerName;
+                    const pointerObj = document.getElementById('pointer-' + pName);
+                    if (!pointerObj) return;
+                    if (payload.payload.state === 'on') {
+                        if (pName === 'red') pointerObj.style.setProperty('--p-color', '#FF0000');
+                        if (pName === 'yellow') pointerObj.style.setProperty('--p-color', '#FFFF00');
+                        if (pName === 'blue') pointerObj.style.setProperty('--p-color', '#0000FF');
+                    } else {
+                        pointerObj.style.setProperty('--p-color', '#FFFFFF');
+                    }
+                }).on('broadcast', { event: 'toggle_item' }, function (payload) {
+                    const itemName = payload.payload.itemName;
+                    if (itemName === "Ô 5.000") return;
+                    const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
+                    const itemElement = document.getElementById(targetId);
+                    if (itemElement) itemElement.style.display = payload.payload.isShow ? 'block' : 'none';
+                }).on('broadcast', { event: 'shuffle_special' }, function (payload) {
+                    specialWedges = payload.payload.wedges;
                     specialValuePopup.style.display = 'none';
-                }
-            }).on('broadcast', { event: 'pointer_light' }, function (payload) {
-                const pName = payload.payload.pointerName;
-                const pointerObj = document.getElementById('pointer-' + pName);
-                if (!pointerObj) return;
-                if (payload.payload.state === 'on') {
-                    if (pName === 'red') pointerObj.style.setProperty('--p-color', '#FF0000');
-                    if (pName === 'yellow') pointerObj.style.setProperty('--p-color', '#FFFF00');
-                    if (pName === 'blue') pointerObj.style.setProperty('--p-color', '#0000FF');
-                } else {
-                    pointerObj.style.setProperty('--p-color', '#FFFFFF');
-                }
-            }).on('broadcast', { event: 'toggle_item' }, function (payload) {
-                const itemName = payload.payload.itemName;
-                if (itemName === "Ô 5.000") return;
-                const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
-                const itemElement = document.getElementById(targetId);
-                if (itemElement) itemElement.style.display = payload.payload.isShow ? 'block' : 'none';
-            }).on('broadcast', { event: 'shuffle_special' }, function (payload) {
-                specialWedges = payload.payload.wedges;
-                specialValuePopup.style.display = 'none';
-            }).on('broadcast', { event: 'show_value' }, function (payload) {
-                executeShowValue(payload.payload.wedgeIndex, payload.payload.displayText);
-            }).on('broadcast', { event: 'hide_value' }, function () {
-                executeHideValue();
-            }).on('broadcast', { event: 'find_highest' }, function (payload) {
-                executeFindHighest(payload.payload.startTime, payload.payload.targetRot, payload.payload.targetIndex);
-            }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
-                // Nhận góc quay đồng bộ từ Wheel khi vừa mở trang
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                currentRotation = payload.payload.rotation;
-                isSpecialMode = payload.payload.isSpecialMode;
-                specialWedges = payload.payload.wedges;
-                wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transform = `rotate(${currentRotation}deg)`;
-            }).on('broadcast', { event: 'reset_rotation' }, function () {
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                currentRotation = 262.5;
-                wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-                wheelGraphic.style.transform = 'rotate(262.5deg)';
-                specialValuePopup.style.display = 'none';
-            }).subscribe((status) => {
-                if (status === 'SUBSCRIBED') {
-                    channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
-                    loadWheelState();
-                }
-            });
+                }).on('broadcast', { event: 'show_value' }, function (payload) {
+                    executeShowValue(payload.payload.wedgeIndex, payload.payload.displayText);
+                }).on('broadcast', { event: 'hide_value' }, function () {
+                    executeHideValue();
+                }).on('broadcast', { event: 'find_highest' }, function (payload) {
+                    executeFindHighest(payload.payload.startTime, payload.payload.targetRot, payload.payload.targetIndex);
+                }).on('broadcast', { event: 'spin_wheel_sync' }, function (payload) {
+                    // Nhận góc quay đồng bộ từ Wheel khi vừa mở trang
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                    currentRotation = payload.payload.rotation;
+                    isSpecialMode = payload.payload.isSpecialMode;
+                    specialWedges = payload.payload.wedges;
+                    wheelGraphic.style.transition = 'none';
+                    wheelGraphic.style.transform = `rotate(${currentRotation}deg)`;
+                }).on('broadcast', { event: 'reset_rotation' }, function () {
+                    if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                    currentRotation = 262.5;
+                    wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                    wheelGraphic.style.transform = 'rotate(262.5deg)';
+                    specialValuePopup.style.display = 'none';
+                }).subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
+                        loadWheelState();
+                    }
+                });
             } catch (e) { console.error("Supabase Error:", e); }
         }
 
