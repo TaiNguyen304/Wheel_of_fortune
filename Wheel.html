@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -408,6 +408,30 @@
             throw new Error('Missing roomid');
         }
 
+        // BỔ SUNG: Khai báo đối tượng Audio toàn cục
+        let currentGlobalAudio = null;
+
+        function playSoundEffect(soundFile) {
+            if (soundFile === 'STOP') {
+                if (currentGlobalAudio) {
+                    currentGlobalAudio.pause();
+                    currentGlobalAudio.currentTime = 0;
+                }
+                return;
+            }
+
+            if (currentGlobalAudio) {
+                currentGlobalAudio.pause();
+                currentGlobalAudio.currentTime = 0;
+            }
+
+            // Đảm bảo file âm thanh nằm chung thư mục với file HTML
+            currentGlobalAudio = new Audio('./' + soundFile);
+            currentGlobalAudio.play().catch(function (error) {
+                console.warn("Chưa tương tác với trang nên chưa thể autoplay sound:", error);
+            });
+        }
+
         let currentRotation = 0;
         let isSpecialMode = false;
         let specialWedges = [];
@@ -523,18 +547,18 @@
         async function saveWheelState() {
             if (isSpinningNow || !roomId) return;
             const localState = buildWheelState();
-            
+
             const { data } = await supabase
                 .from('game_room_state')
                 .select('wheel_state')
                 .eq('room_id', roomId)
                 .single();
-            
+
             let currentState = {};
             if (data && data.wheel_state) {
                 currentState = data.wheel_state;
             }
-            
+
             const newState = Object.assign({}, currentState, localState);
 
             await supabase.from('game_room_state').update({
@@ -889,6 +913,10 @@
                 executeUpdatePlayerCard(payload.payload.color, payload.payload.cardIdx, payload.payload.isActive);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 executeResetRotation();
+            }).on('broadcast', { event: 'play_sound' }, function (payload) {
+                if (payload && payload.payload && payload.payload.sound) {
+                    playSoundEffect(payload.payload.sound);
+                }
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
                     channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });

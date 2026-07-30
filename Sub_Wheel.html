@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
- 
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,12 +32,29 @@
             position: relative;
             width: 600px;
             height: 600px;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: center top;
+            /* Cố định tâm xoay tại chính giữa tâm bánh xe */
+            transform-origin: center center !important;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: scale(1) rotate(0deg);
+            margin-top: 0px;
         }
 
+        /* 1. EASE IN VÀNG: Zoom x2, xoay 0 deg, đẩy khung hình lên trên để thấy rõ 3 kim */
         .wheel-area.zoomed {
-            transform: scale(2) translateY(50px);
+            transform: scale(2) rotate(0deg) !important;
+            margin-top: 750px;
+        }
+
+        /* 2. EASE IN ĐỎ: Giữ vị trí Zoom góc trên, xoay 30 deg */
+        .wheel-area.zoomed.tilt-red {
+            transform: scale(2) rotate(30deg) !important;
+            margin-top: 750px;
+        }
+
+        /* 3. EASE IN XANH: Giữ vị trí Zoom góc trên, xoay -30 deg */
+        .wheel-area.zoomed.tilt-blue {
+            transform: scale(2) rotate(-30deg) !important;
+            margin-top: 750px;
         }
 
         .wheel-container {
@@ -123,7 +140,6 @@
             object-fit: fill;
         }
 
-        /* ĐÃ SỬA CÂN BẰNG TUYỆT ĐỐI VÒNG CHẤM TRÒN */
         .dots-ring {
             position: absolute;
             top: 0;
@@ -258,6 +274,28 @@
             throw new Error('Missing roomid');
         }
 
+        let currentGlobalAudio = null;
+
+        function playSoundEffect(soundFile) {
+            if (soundFile === 'STOP') {
+                if (currentGlobalAudio) {
+                    currentGlobalAudio.pause();
+                    currentGlobalAudio.currentTime = 0;
+                }
+                return;
+            }
+
+            if (currentGlobalAudio) {
+                currentGlobalAudio.pause();
+                currentGlobalAudio.currentTime = 0;
+            }
+
+            currentGlobalAudio = new Audio('./' + soundFile);
+            currentGlobalAudio.play().catch(function (error) {
+                console.warn("Chưa tương tác với trang nên chưa thể autoplay sound:", error);
+            });
+        }
+
         let currentRotation = 0;
         let isSpecialMode = false;
         let specialWedges = [];
@@ -349,6 +387,35 @@
             dotsRing.appendChild(wrapper);
         }
 
+        function executeTiltSubWheel(direction) {
+            wheelArea.classList.add('zoomed');
+            wheelArea.classList.remove('tilt-red', 'tilt-blue');
+
+            if (direction === 'red') {
+                wheelArea.classList.add('tilt-red');
+            } else if (direction === 'blue') {
+                wheelArea.classList.add('tilt-blue');
+            }
+            if (typeof saveWheelState === 'function') saveWheelState();
+        }
+
+        function executeZoomPointer(type) {
+            if (type === 'out') {
+                wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+            } else if (type === 'in') {
+                wheelArea.classList.add('zoomed');
+                wheelArea.classList.remove('tilt-red', 'tilt-blue');
+            }
+            if (typeof saveWheelState === 'function') saveWheelState();
+        }
+
+        // BỔ SUNG: Xác định hướng nghiêng hiện tại để lưu dữ liệu
+        function getSubWheelTiltState() {
+            if (wheelArea.classList.contains('tilt-red')) return 'red';
+            if (wheelArea.classList.contains('tilt-blue')) return 'blue';
+            return 'none';
+        }
+
         function buildWheelState() {
             const state = {
                 currentRotation: currentRotation,
@@ -357,6 +424,7 @@
                 wheelDisplay: wheelGraphic.style.display,
                 wheelBg: wheelGraphic.style.backgroundImage,
                 zoomed: wheelArea.classList.contains('zoomed'),
+                subWheelTilt: getSubWheelTiltState(), // BỔ SUNG: Lưu hướng nghiêng vào database
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
                 pointerLights: pointerLightsState,
@@ -373,18 +441,18 @@
         async function saveWheelState() {
             if (isSpinningNow || !roomId) return;
             const localState = buildWheelState();
-            
+
             const { data } = await supabase
                 .from('game_room_state')
                 .select('wheel_state')
                 .eq('room_id', roomId)
                 .single();
-            
+
             let currentState = {};
             if (data && data.wheel_state) {
                 currentState = data.wheel_state;
             }
-            
+
             const newState = Object.assign({}, currentState, localState);
 
             await supabase.from('game_room_state').upsert({
@@ -406,8 +474,16 @@
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
             activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
 
-            if (state.zoomed) wheelArea.classList.add('zoomed');
-            else wheelArea.classList.remove('zoomed');
+            // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
+            wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+            if (state.zoomed) {
+                wheelArea.classList.add('zoomed');
+                if (state.subWheelTilt === 'red') {
+                    wheelArea.classList.add('tilt-red');
+                } else if (state.subWheelTilt === 'blue') {
+                    wheelArea.classList.add('tilt-blue');
+                }
+            }
 
             specialValuePopup.style.display = state.popupDisplay || 'none';
             specialValuePopup.innerText = state.popupText || '0 điểm';
@@ -420,7 +496,6 @@
                 });
             }
 
-            // Sync pointer lights
             if (state.pointerLights) {
                 pointerLightsState = Object.assign({}, state.pointerLights);
                 ['red', 'yellow', 'blue'].forEach(pName => {
@@ -463,9 +538,8 @@
                 isSpecialMode = true;
                 activeWheelType = 'special';
             } else if (type === 'sub_wheel') {
-                // Cập nhật đường dẫn ảnh cho màn hình phụ
                 wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
-                isSpecialMode = true; // Kích hoạt biến trạng thái xử lý logic hiển thị popup và tính toán ô điểm
+                isSpecialMode = true;
                 activeWheelType = 'sub_wheel';
             } else {
                 wheelGraphic.style.backgroundImage = "url('./Nón.png')";
@@ -518,8 +592,6 @@
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
-            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
             const startTimestamp = Date.now();
             const durationMs = finalDuration * 1000;
 
@@ -630,12 +702,9 @@
 
             specialValuePopup.style.display = 'none';
 
-            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
-            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
             const startTimestamp = Date.now();
             const durationMs = 4000;
 
-            // NÂNG CẤP: Hàm nội suy Quintic đồng bộ cho tính năng tìm ô cao nhất
             function easeOutQuint(t) {
                 return 1 - Math.pow(1 - t, 5);
             }
@@ -685,8 +754,12 @@
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
-                if (payload.payload.type === 'in') wheelArea.classList.add('zoomed');
-                else wheelArea.classList.remove('zoomed');
+                if (payload.payload.type === 'in') {
+                    wheelArea.classList.add('zoomed');
+                    wheelArea.classList.remove('tilt-red', 'tilt-blue');
+                } else if (payload.payload.type === 'out') {
+                    wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+                }
                 saveWheelState();
             }).on('broadcast', { event: 'toggle_item' }, function (payload) {
                 executeToggleItem(payload.payload.itemName, payload.payload.isShow);
@@ -702,6 +775,10 @@
                 executeFindHighest(payload.payload.startTime, payload.payload.targetRot, payload.payload.targetIndex);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 executeResetRotation();
+            }).on('broadcast', { event: 'play_sound' }, function (payload) {
+                if (payload && payload.payload && payload.payload.sound) {
+                    playSoundEffect(payload.payload.sound);
+                }
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
                     channel.send({ event: 'request_sync', type: 'broadcast', payload: {} });
@@ -725,6 +802,18 @@
                 specialWedges = payload.payload.wedges;
                 wheelGraphic.style.transition = 'none';
                 wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
+            });
+
+            channel.on('broadcast', { event: 'tilt_sub_wheel' }, function (payload) {
+                wheelArea.classList.add('zoomed');
+                wheelArea.classList.remove('tilt-red', 'tilt-blue');
+
+                if (payload.payload.direction === 'red') {
+                    wheelArea.classList.add('tilt-red');
+                } else if (payload.payload.direction === 'blue') {
+                    wheelArea.classList.add('tilt-blue');
+                }
+                saveWheelState();
             });
 
         } catch (e) { }

@@ -164,11 +164,68 @@
         <div class="flex-row">
             <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
         </div>
-        <div id="roomCreateResult" style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;"></div>
-        <div id="currentRoomInfo" style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
+        <div id="roomCreateResult"
+            style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
+        </div>
+        <div id="currentRoomInfo"
+            style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
         <div id="roomError" style="margin-top: 10px; color: red;"></div>
     </div>
 
+    <!-- MỤC QUẢN LÝ SOUNDBOARD (BỔ SUNG) -->
+    <div class="section">
+        <h2>Quản lý Soundboard</h2>
+        <style>
+            .soundboard-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+                gap: 10px;
+            }
+
+            .sound-btn {
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                background: purple;
+                color: white;
+                font-weight: bold;
+                transition: 0.2s;
+            }
+
+            .sound-btn:hover {
+                background: orange !important;
+                color: #fff !important;
+            }
+
+            .sound-btn.stop-btn {
+                background: red !important;
+            }
+        </style>
+        <div class="soundboard-grid">
+            <button class="sound-btn" onclick="triggerSound('intro.mp3')">Intro</button>
+            <button class="sound-btn" onclick="triggerSound('open.mp3')">Open</button>
+            <button class="sound-btn" onclick="triggerSound('toss_up.mp3')">Toss Up</button>
+            <button class="sound-btn" onclick="triggerSound('toss_up_solve.mp3')">Toss up solve</button>
+            <button class="sound-btn" onclick="triggerSound('solve.mp3')">Solve</button>
+            <button class="sound-btn" onclick="triggerSound('mystery.mp3')">Mystery</button>
+            <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
+            <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
+            <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Spin Bell</button>
+            <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
+            <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
+            <button class="sound-btn" onclick="triggerSound('bonus_spin.mp3')">Bonus Spin</button>
+            <button class="sound-btn" onclick="triggerSound('nghia.mp3')">NGHIA</button>
+            <button class="sound-btn" onclick="triggerSound('3l.mp3')">3L</button>
+            <button class="sound-btn" onclick="triggerSound('10s.mp3')">10s</button>
+            <button class="sound-btn" onclick="triggerSound('bonus_win.mp3')">Bonus Win</button>
+            <button class="sound-btn" onclick="triggerSound('bonus_lose.mp3')">Bonus Lose</button>
+            <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
+            <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
+
+            <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">Dừng âm thanh</button>
+        </div>
+    </div>
     <div class="section">
         <h2>Điều khiển Nón</h2>
         <div class="flex-row">
@@ -238,7 +295,9 @@
             </div>
             <div class="pointer-control" style="background-color: purple; color: #fff;">
                 <span>Zoom Kim:</span>
-                <button onclick="zoomPointer('in')" style="background: green; color: white;">Ease in</button>
+                <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
+                <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
+                <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
                 <button onclick="zoomPointer('out')" style="background: #ff00ff; color: white;">Ease out</button>
             </div>
         </div>
@@ -506,14 +565,14 @@
                 .select('wheel_state')
                 .eq('room_id', roomId)
                 .single();
-            
+
             let currentState = {};
             if (data && data.wheel_state) {
                 currentState = data.wheel_state;
             }
-            
+
             const newState = Object.assign({}, currentState, updates);
-            
+
             await supabase
                 .from('game_room_state')
                 .update({ wheel_state: newState })
@@ -676,8 +735,15 @@
         }
 
         function zoomPointer(type) {
-            sendEvent('zoom_pointer', { type });
-            updateWheelStateFields({ zoomed: (type === 'in') });
+            if (type === 'out') {
+                // Ease out: Về góc thẳng và bỏ Zoom
+                sendEvent('zoom_pointer', { type: 'out' });
+                updateWheelStateFields({ zoomed: false, subWheelTilt: 'none' });
+            } else if (type === 'in') {
+                // Ease in Vàng: Giữ Zoom và đưa về góc thẳng
+                sendEvent('zoom_pointer', { type: 'in' });
+                updateWheelStateFields({ zoomed: true, subWheelTilt: 'none' });
+            }
         }
 
         function toggleItem(itemName, isShow) {
@@ -953,6 +1019,16 @@
         loadRoomState().then(function () {
             syncScoresToWheel(false);
         });
+
+        // BỔ SUNG: Hàm phát/dừng âm thanh theo phòng
+        function triggerSound(soundFile) {
+            sendEvent('play_sound', { sound: soundFile, timestamp: Date.now() });
+        }
+
+        function easeTiltSubWheel(direction) {
+            sendEvent('tilt_sub_wheel', { direction: direction });
+            updateWheelStateFields({ subWheelTilt: direction });
+        }
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
