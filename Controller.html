@@ -122,6 +122,7 @@
 
         .block-yellow {
             border-color: yellow;
+            background-color: black;
         }
 
         .block-blue {
@@ -373,6 +374,11 @@
                     +</button>
                 <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="modifyScoreMultiplier('red', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="modifyScoreMultiplier('red', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="modifyScoreMultiplier('red', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('red', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('red', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-red"></div>
         </div>
@@ -393,6 +399,11 @@
                     +</button>
                 <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="modifyScoreMultiplier('yellow', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="modifyScoreMultiplier('yellow', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="modifyScoreMultiplier('yellow', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('yellow', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('yellow', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-yellow"></div>
         </div>
@@ -411,6 +422,11 @@
                     +</button>
                 <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng
                     -</button>
+                <button onclick="modifyScoreMultiplier('blue', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
+                <button onclick="modifyScoreMultiplier('blue', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
+                <button onclick="modifyScoreMultiplier('blue', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
+                <button onclick="resetPlayerScore('blue', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
+                <button onclick="resetPlayerScore('blue', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
             </div>
             <div class="flex-row" id="cards-row-blue"></div>
         </div>
@@ -939,6 +955,21 @@
             }
             syncScoresToWheel();
             inputEl.value = '';
+        }
+
+        function modifyScoreMultiplier(color, multiplier) {
+            let key = color + 'Round';
+            globalScores[key] = Math.round(globalScores[key] * multiplier);
+            syncScoresToWheel();
+        }
+
+        function resetPlayerScore(color, type) {
+            if (type === 'round') {
+                globalScores[color + 'Round'] = 0;
+            } else if (type === 'total') {
+                globalScores[color + 'Total'] = 0;
+            }
+            syncScoresToWheel();
         }
 
         function resetAllScores(type) {

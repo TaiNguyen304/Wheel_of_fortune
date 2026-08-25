@@ -15,15 +15,67 @@
 
         body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background: purple;
             color: white;
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            gap: 40px;
+            position: relative;
+        }
+
+        .view-navigation {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.75);
+            padding: 6px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        .view-btn {
+            padding: 8px 20px;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background: #800080;
+            color: white;
+            font-weight: bold !important;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .view-btn:hover {
+            background: orange !important;
+            color: white !important;
+        }
+
+        .view-btn.active {
+            background: #ffd700 !important;
+            color: black !important;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+
+        #view-wheel {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .wheel-area {
@@ -33,10 +85,29 @@
             position: relative;
             width: 600px;
             height: 600px;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            transform-origin: center top;
-            margin-left: 20px;
-            flex-shrink: 0;
+            /* Cố định tâm xoay tại chính giữa tâm bánh xe */
+            transform-origin: center center !important;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transform: scale(1) rotate(0deg);
+            margin-top: 0px;
+        }
+
+        /* 1. EASE IN VÀNG: Zoom x2, xoay 0 deg, đẩy khung hình lên trên để thấy rõ 3 kim */
+        .wheel-area.zoomed {
+            transform: scale(2) rotate(0deg) !important;
+            margin-top: 750px;
+        }
+
+        /* 2. EASE IN ĐỎ: Giữ vị trí Zoom góc trên, xoay 30 deg */
+        .wheel-area.zoomed.tilt-red {
+            transform: scale(2) rotate(30deg) !important;
+            margin-top: 750px;
+        }
+
+        /* 3. EASE IN XANH: Giữ vị trí Zoom góc trên, xoay -30 deg */
+        .wheel-area.zoomed.tilt-blue {
+            transform: scale(2) rotate(-30deg) !important;
+            margin-top: 750px;
         }
 
         .wheel-container {
@@ -200,12 +271,26 @@
             --p-color: #FFFFFF;
         }
 
+        #view-scores {
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 60px 20px 20px 20px;
+            overflow-y: auto;
+        }
+
         .players-scoreboard {
-            flex-grow: 1;
+            width: 100%;
+            max-width: 750px;
             display: flex;
             flex-direction: column;
             gap: 25px;
-            max-width: 650px;
+            z-index: 10;
         }
 
         .player-row {
@@ -284,112 +369,123 @@
 
 <body>
 
-    <div class="wheel-area" id="wheelArea">
-        <div class="wheel-container" id="wheelContainer">
-            <div id="wheelGraphic">
-                <div class="items-ring" id="itemsRing"></div>
-                <div class="dots-ring" id="dotsRing"></div>
-            </div>
-            <div id="specialValuePopup">0 điểm</div>
-            <div class="pointer-wrapper wrapper-red">
-                <div class="pointer-body" id="pointer-red">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
-                    </svg>
+    <div class="view-navigation" id="viewNav">
+        <button id="btn-view-wheel" class="view-btn active" onclick="switchView('wheel')">🎡 View 1: Vòng quay</button>
+        <button id="btn-view-scores" class="view-btn" onclick="switchView('scores')">📊 View 2: Điểm số</button>
+    </div>
+
+    <!-- VIEW 1: VÒNG QUAY -->
+    <div id="view-wheel">
+        <div class="wheel-area" id="wheelArea">
+            <div class="wheel-container" id="wheelContainer">
+                <div id="wheelGraphic">
+                    <div class="items-ring" id="itemsRing"></div>
+                    <div class="dots-ring" id="dotsRing"></div>
                 </div>
-            </div>
-            <div class="pointer-wrapper wrapper-yellow">
-                <div class="pointer-body" id="pointer-yellow">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
-                    </svg>
+                <div id="specialValuePopup">0 điểm</div>
+                <div class="pointer-wrapper wrapper-red">
+                    <div class="pointer-body" id="pointer-red">
+                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
+                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        </svg>
+                    </div>
                 </div>
-            </div>
-            <div class="pointer-wrapper wrapper-blue">
-                <div class="pointer-body" id="pointer-blue">
-                    <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                        <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
-                            stroke="white" stroke-width="2" stroke-linejoin="round" />
-                    </svg>
+                <div class="pointer-wrapper wrapper-yellow">
+                    <div class="pointer-body" id="pointer-yellow">
+                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
+                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="pointer-wrapper wrapper-blue">
+                    <div class="pointer-body" id="pointer-blue">
+                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
+                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        </svg>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="players-scoreboard">
-        <div class="player-row row-red" id="row-red">
-            <div class="score-boxes">
-                <div class="score-box" id="display-red-round">0</div>
-                <div class="score-box" id="display-red-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
+    <!-- VIEW 2: ĐIỂM SỐ -->
+    <div id="view-scores">
+        <div class="players-scoreboard">
+            <div class="player-row row-red" id="row-red">
+                <div class="score-boxes">
+                    <div class="score-box" id="display-red-round">0</div>
+                    <div class="score-box" id="display-red-total">0</div>
                 </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                <div class="cards-grid">
+                    <div class="cards-line">
+                        <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
+                        <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
+                        <div class="card-slot" data-card="2">Cơ Hội</div>
+                        <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
+                        <div class="card-slot" data-card="4">10.000</div>
+                        <div class="card-slot" data-card="5">1 Triệu</div>
+                    </div>
+                    <div class="cards-line" style="padding: 0 4%;">
+                        <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
+                        <div class="card-slot" data-card="7">Bảo Vệ</div>
+                        <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
+                        <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
+                        <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
+                        <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="player-row row-yellow" id="row-yellow">
-            <div class="score-boxes">
-                <div class="score-box" id="display-yellow-round">0</div>
-                <div class="score-box" id="display-yellow-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
+            <div class="player-row row-yellow" id="row-yellow">
+                <div class="score-boxes">
+                    <div class="score-box" id="display-yellow-round">0</div>
+                    <div class="score-box" id="display-yellow-total">0</div>
                 </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                <div class="cards-grid">
+                    <div class="cards-line">
+                        <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
+                        <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
+                        <div class="card-slot" data-card="2">Cơ Hội</div>
+                        <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
+                        <div class="card-slot" data-card="4">10.000</div>
+                        <div class="card-slot" data-card="5">1 Triệu</div>
+                    </div>
+                    <div class="cards-line" style="padding: 0 4%;">
+                        <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
+                        <div class="card-slot" data-card="7">Bảo Vệ</div>
+                        <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
+                        <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
+                        <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
+                        <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="player-row row-blue" id="row-blue">
-            <div class="score-boxes">
-                <div class="score-box" id="display-blue-round">0</div>
-                <div class="score-box" id="display-blue-total">0</div>
-            </div>
-            <div class="cards-grid">
-                <div class="cards-line">
-                    <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
-                    <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
-                    <div class="card-slot" data-card="2">Cơ Hội</div>
-                    <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
-                    <div class="card-slot" data-card="4">10.000</div>
-                    <div class="card-slot" data-card="5">1 Triệu</div>
+            <div class="player-row row-blue" id="row-blue">
+                <div class="score-boxes">
+                    <div class="score-box" id="display-blue-round">0</div>
+                    <div class="score-box" id="display-blue-total">0</div>
                 </div>
-                <div class="cards-line" style="padding: 0 4%;">
-                    <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
-                    <div class="card-slot" data-card="7">Bảo Vệ</div>
-                    <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
-                    <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
-                    <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
-                    <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                <div class="cards-grid">
+                    <div class="cards-line">
+                        <div class="card-slot" data-card="0">Thẻ 1/2 (1)</div>
+                        <div class="card-slot" data-card="1">Thẻ 1/2 (2)</div>
+                        <div class="card-slot" data-card="2">Cơ Hội</div>
+                        <div class="card-slot" data-card="3">Kháng Mất Điểm</div>
+                        <div class="card-slot" data-card="4">10.000</div>
+                        <div class="card-slot" data-card="5">1 Triệu</div>
+                    </div>
+                    <div class="cards-line" style="padding: 0 4%;">
+                        <div class="card-slot" data-card="6">Thẻ Nhân Đôi</div>
+                        <div class="card-slot" data-card="7">Bảo Vệ</div>
+                        <div class="card-slot" data-card="8">Thẻ Thêm Lượt</div>
+                        <div class="card-slot" data-card="9">Ô Nhân Đôi</div>
+                        <div class="card-slot" data-card="10">Ô Thêm Lượt</div>
+                        <div class="card-slot" data-card="11">Ô Quy Đổi</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -523,7 +619,35 @@
             dotsRing.appendChild(wrapper);
         }
 
+        function switchView(viewName) {
+            const viewWheel = document.getElementById('view-wheel');
+            const viewScores = document.getElementById('view-scores');
+            const btnWheel = document.getElementById('btn-view-wheel');
+            const btnScores = document.getElementById('btn-view-scores');
+
+            if (viewName === 'scores') {
+                viewWheel.style.display = 'none';
+                viewScores.style.display = 'flex';
+                btnScores.classList.add('active');
+                btnWheel.classList.remove('active');
+            } else {
+                viewWheel.style.display = 'flex';
+                viewScores.style.display = 'none';
+                btnWheel.classList.add('active');
+                btnScores.classList.remove('active');
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('view') === 'scores') {
+            switchView('scores');
+        }
+
         function buildWheelState() {
+            let tilt = 'none';
+            if (wheelArea.classList.contains('tilt-red')) tilt = 'red';
+            else if (wheelArea.classList.contains('tilt-blue')) tilt = 'blue';
+
             const state = {
                 currentRotation: currentRotation,
                 isSpecialMode: isSpecialMode,
@@ -531,6 +655,7 @@
                 wheelDisplay: wheelGraphic.style.display,
                 wheelBg: wheelGraphic.style.backgroundImage,
                 zoomed: wheelArea.classList.contains('zoomed'),
+                subWheelTilt: tilt,
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
                 pointerLights: pointerLightsState,
@@ -579,8 +704,16 @@
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
             activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
 
-            if (state.zoomed) wheelArea.classList.add('zoomed');
-            else wheelArea.classList.remove('zoomed');
+            // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
+            wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+            if (state.zoomed) {
+                wheelArea.classList.add('zoomed');
+                if (state.subWheelTilt === 'red') {
+                    wheelArea.classList.add('tilt-red');
+                } else if (state.subWheelTilt === 'blue') {
+                    wheelArea.classList.add('tilt-blue');
+                }
+            }
 
             specialValuePopup.style.display = state.popupDisplay || 'none';
             specialValuePopup.innerText = state.popupText || '0 điểm';
@@ -892,8 +1025,22 @@
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
-                if (payload.payload.type === 'in') wheelArea.classList.add('zoomed');
-                else wheelArea.classList.remove('zoomed');
+                if (payload.payload.type === 'in') {
+                    wheelArea.classList.add('zoomed');
+                    wheelArea.classList.remove('tilt-red', 'tilt-blue');
+                } else if (payload.payload.type === 'out') {
+                    wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+                }
+                saveWheelState();
+            }).on('broadcast', { event: 'tilt_sub_wheel' }, function (payload) {
+                wheelArea.classList.add('zoomed');
+                wheelArea.classList.remove('tilt-red', 'tilt-blue');
+
+                if (payload.payload.direction === 'red') {
+                    wheelArea.classList.add('tilt-red');
+                } else if (payload.payload.direction === 'blue') {
+                    wheelArea.classList.add('tilt-blue');
+                }
                 saveWheelState();
             }).on('broadcast', { event: 'toggle_item' }, function (payload) {
                 executeToggleItem(payload.payload.itemName, payload.payload.isShow);
