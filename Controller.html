@@ -14,430 +14,569 @@
         }
 
         body {
-            padding: 20px;
+            padding: 6px;
+            margin: 0;
             background-color: #f0f2f5;
+            font-size: 12px;
+            color: #333;
+            overflow-x: hidden;
         }
 
         .section {
             background: white;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 6px 8px;
+            margin-bottom: 6px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin: 0 0 5px 0;
+            font-size: 13px;
+            color: #222;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         .grid-pointer {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
         }
 
         .grid-4 {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
         }
 
         .grid-6x4 {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 10px;
-            margin-top: 15px;
+            gap: 3px;
+            margin-top: 4px;
         }
 
         .flex-row {
             display: flex;
-            gap: 10px;
+            gap: 4px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 10px 15px;
+            padding: 5px 8px;
             border: none;
-            border-radius: 5px;
+            border-radius: 4px;
             cursor: pointer;
-            background: purple;
-            color: white;
-            transition: 0.2s;
+            background: #800080;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+            transition: 0.15s;
+            white-space: nowrap;
         }
 
         button:hover {
             background: orange !important;
-            color: #fff !important;
+            color: #ffffff !important;
         }
 
         button.btn-off {
             background: #ff00ff;
+            color: #ffffff;
+            font-weight: bold;
         }
 
         button.btn-off:hover {
             background: orange !important;
-            color: #fff !important;
+            color: #ffffff !important;
         }
 
         input[type="number"],
         input[type="text"] {
-            padding: 10px;
+            padding: 4px 6px;
             border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 150px;
+            border-radius: 4px;
+            width: 90px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        button:disabled,
+        button[disabled],
+        input:disabled,
+        input[disabled] {
+            opacity: 0.35 !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
+            filter: grayscale(0.8) !important;
+            box-shadow: none !important;
+        }
+
+        #btnCreateRoom {
+            opacity: 1 !important;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            filter: none !important;
+        }
+
+        .room-alert-inactive {
+            background: #fee2e2 !important;
+            border: 1px solid #ef4444 !important;
+            color: #991b1b !important;
+            padding: 6px 8px;
+            border-radius: 4px;
+        }
+
+        .room-alert-active {
+            background: #ecfdf5 !important;
+            border: 1px solid #10b981 !important;
+            color: #065f46 !important;
+            padding: 6px 8px;
+            border-radius: 4px;
         }
 
         .item-card {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
+            border: 1px solid #e0e0e0;
+            padding: 3px 4px;
+            border-radius: 4px;
             text-align: center;
+            background: #fafafa;
+            font-size: 10.5px;
         }
 
         .pointer-control {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
+            justify-content: space-between;
+            gap: 4px;
+            padding: 4px 6px;
             border: 1px solid #eee;
-            border-radius: 5px;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .pointer-control button {
+            padding: 3px 6px;
+            font-size: 10px;
         }
 
         .wedge-cell {
-            padding: 12px;
+            padding: 4px 2px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 3px;
             border: 1px solid #ccc;
-            font-size: 14px;
+            font-size: 9.5px;
+            line-height: 1.1;
+            font-weight: bold;
         }
 
         /* THIẾT KẾ ĐIỀU KHIỂN NGƯỜI CHƠI */
         .player-control-block {
-            border: 3px solid #ccc;
-            padding: 15px;
-            margin-top: 15px;
-            border-radius: 8px;
+            border: 2px solid #ccc;
+            padding: 6px 8px;
+            margin-top: 4px;
+            border-radius: 6px;
         }
 
         .block-red {
             border-color: red;
+            background-color: #fff5f5;
         }
 
         .block-yellow {
-            border-color: yellow;
-            background-color: black;
+            border-color: #ffff00;
+            background-color: #1a1a1a;
+            color: #ffffff;
         }
 
         .block-blue {
-            border-color: blue;
+            border-color: #0000ff;
+            background-color: #eff6ff;
         }
 
         .score-display-row {
             display: flex;
-            gap: 15px;
-            margin-bottom: 15px;
+            gap: 6px;
+            margin-bottom: 5px;
         }
 
         .score-info-box {
-            padding: 10px 20px;
-            font-size: 18px;
+            padding: 4px 8px;
+            font-size: 13px;
             border-radius: 4px;
             color: white;
-            min-width: 160px;
+            flex: 1;
             text-align: center;
+            font-weight: bold;
         }
 
         .btn-card-toggle {
-            padding: 6px 10px;
-            font-size: 11px;
+            padding: 3px 5px;
+            font-size: 9.5px;
             background: #333;
             border: 1px solid #fff;
+            border-radius: 3px;
+            color: #fff;
+            font-weight: bold;
         }
 
         .btn-card-toggle.active-status {
             background: #008000 !important;
             color: #fff !important;
         }
+
+        .soundboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+        }
+
+        .sound-btn {
+            padding: 5px 3px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #800080;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 10.5px;
+            transition: 0.15s;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sound-btn:hover {
+            background: orange !important;
+            color: #fff !important;
+        }
+
+        .sound-btn.stop-btn {
+            background: red !important;
+            grid-column: span 3;
+            font-size: 11px;
+            padding: 6px;
+        }
+
+        /* Items container scrollable */
+        #itemsContainer {
+            max-height: 180px;
+            overflow-y: auto;
+            padding-right: 2px;
+        }
+
+        /* Scrollbar gọn gàng */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bbb;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #888;
+        }
     </style>
 </head>
 
 <body>
 
-    <div class="section">
-        <h2>Tạo mã phòng và mật khẩu</h2>
-        <div class="flex-row">
-            <button onclick="createRoom()" style="background: green; color: white;">Tạo phòng mới</button>
-        </div>
-        <div id="roomCreateResult"
-            style="margin-top: 15px; display: none; padding: 15px; background: #f9f9f9; border-radius: 5px; border: 1px solid #ddd;">
-        </div>
-        <div id="currentRoomInfo"
-            style="margin-top: 15px; padding: 12px; background: #e8f4fd; border-radius: 5px; display: none;"></div>
-        <div id="roomError" style="margin-top: 10px; color: red;"></div>
-    </div>
+    <div style="display: grid; grid-template-columns: 1fr 1.05fr 1.35fr 1.15fr; gap: 6px; align-items: start; max-width: 100%;">
+        
+        <!-- CỘT 1: TẠO PHÒNG & ĐIỀU KHIỂN NÓN -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="section">
+                <h2>Tạo mã phòng & mật khẩu</h2>
+                <div class="flex-row">
+                    <button id="btnCreateRoom" onclick="createRoom()" style="background: green; color: #ffffff; width: 100%; padding: 6px;">Tạo phòng mới</button>
+                </div>
+                <div id="roomCreateResult"
+                    style="margin-top: 5px; display: none; padding: 5px; background: #f9f9f9; border-radius: 4px; border: 1px solid #ddd; font-size: 11px;">
+                </div>
+                <div id="currentRoomInfo"
+                    style="margin-top: 5px; display: none; font-size: 11px; line-height: 1.35;"></div>
+                <div id="roomError" style="margin-top: 4px; color: red; font-size: 11px; font-weight: bold;"></div>
+            </div>
 
-    <!-- MỤC QUẢN LÝ SOUNDBOARD (BỔ SUNG) -->
-    <div class="section">
-        <h2>Quản lý Soundboard</h2>
-        <style>
-            .soundboard-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-                gap: 10px;
-            }
+            <div class="section">
+                <h2>Điều khiển Nón</h2>
+                <div class="flex-row" style="gap: 3px;">
+                    <button onclick="toggleWheel('normal', true)">Hiện Nón</button>
+                    <button class="btn-off" onclick="toggleWheel('normal', false)">Ẩn Nón</button>
+                    <button onclick="toggleWheel('special', true)">Hiện Nón ĐB</button>
+                    <button class="btn-off" onclick="toggleWheel('special', false)">Ẩn Nón ĐB</button>
+                    <button onclick="toggleWheel('sub_wheel', true)" style="background-color: #800080; color: #ffffff; font-weight: bold;">Hiện Nón Phụ</button>
+                    <button class="btn-off" onclick="toggleWheel('sub_wheel', false)">Ẩn Nón Phụ</button>
+                    <button onclick="resetWheelRotation()" style="background-color: #800080; color: #ffffff; font-weight: bold; width: 100%; margin-top: 2px;">Reset Góc Quay</button>
+                </div>
+                <div class="flex-row" style="margin-top: 6px;">
+                    <label style="font-size: 11px;">TG quay (5-20s):</label>
+                    <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10" style="width: 55px;">
+                    <button onclick="spinWheel()" style="flex: 1; background: #ff00ff; color: #ffffff; font-weight: bold;">Quay Nón</button>
+                </div>
+            </div>
 
-            .sound-btn {
-                padding: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                background: purple;
-                color: white;
-                font-weight: bold;
-                transition: 0.2s;
-            }
-
-            .sound-btn:hover {
-                background: orange !important;
-                color: #fff !important;
-            }
-
-            .sound-btn.stop-btn {
-                background: red !important;
-            }
-        </style>
-        <div class="soundboard-grid">
-            <button class="sound-btn" onclick="triggerSound('intro.mp3')">Intro</button>
-            <button class="sound-btn" onclick="triggerSound('open.mp3')">Open</button>
-            <button class="sound-btn" onclick="triggerSound('toss_up.mp3')">Toss Up</button>
-            <button class="sound-btn" onclick="triggerSound('toss_up_solve.mp3')">Toss up solve</button>
-            <button class="sound-btn" onclick="triggerSound('solve.mp3')">Solve</button>
-            <button class="sound-btn" onclick="triggerSound('mystery.mp3')">Mystery</button>
-            <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
-            <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
-            <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Spin Bell</button>
-            <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
-            <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_spin.mp3')">Bonus Spin</button>
-            <button class="sound-btn" onclick="triggerSound('nghia.mp3')">NGHIA</button>
-            <button class="sound-btn" onclick="triggerSound('3l.mp3')">3L</button>
-            <button class="sound-btn" onclick="triggerSound('10s.mp3')">10s</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_win.mp3')">Bonus Win</button>
-            <button class="sound-btn" onclick="triggerSound('bonus_lose.mp3')">Bonus Lose</button>
-            <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
-            <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
-
-            <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">Dừng âm thanh</button>
-        </div>
-    </div>
-    <div class="section">
-        <h2>Điều khiển Nón</h2>
-        <div class="flex-row">
-            <button onclick="toggleWheel('normal', true)">Hiện Nón</button>
-            <button class="btn-off" onclick="toggleWheel('normal', false)">Ẩn Nón</button>
-            <button onclick="toggleWheel('special', true)">Hiện Nón Đặc Biệt</button>
-            <button class="btn-off" onclick="toggleWheel('special', false)">Ẩn Nón Đặc Biệt</button>
-            <button onclick="toggleWheel('sub_wheel', true)" style="background-color: #800080; color: white;">Hiện Nón
-                Phụ</button>
-            <button class="btn-off" onclick="toggleWheel('sub_wheel', false)">Ẩn Nón Phụ</button>
-            <button onclick="resetWheelRotation()" style="background-color: #800080; color: white;">Reset Góc
-                Quay</button>
-        </div>
-        <div class="flex-row" style="margin-top: 15px;">
-            <label>Thời gian quay (5-20s):</label>
-            <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10">
-            <button onclick="spinWheel()">Quay Nón</button>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Điều khiển Nón Phụ</h2>
-        <div class="flex-row">
-            <button onclick="shuffleSubWheel()" style="background: blue; color: white;">Xáo giá trị nón phụ</button>
-            <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị ô quay vào</button>
-            <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
-            <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+            <div class="section">
+                <h2>Soundboard</h2>
+                <div class="soundboard-grid">
+                    <button class="sound-btn" onclick="triggerSound('intro.mp3')">Intro</button>
+                    <button class="sound-btn" onclick="triggerSound('open.mp3')">Open</button>
+                    <button class="sound-btn" onclick="triggerSound('toss_up.mp3')">Toss Up</button>
+                    <button class="sound-btn" onclick="triggerSound('toss_up_solve.mp3')">Toss Solv</button>
+                    <button class="sound-btn" onclick="triggerSound('solve.mp3')">Solve</button>
+                    <button class="sound-btn" onclick="triggerSound('mystery.mp3')">Mystery</button>
+                    <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
+                    <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
+                    <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Bell</button>
+                    <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
+                    <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_spin.mp3')">Bonus Spin</button>
+                    <button class="sound-btn" onclick="triggerSound('nghia.mp3')">NGHIA</button>
+                    <button class="sound-btn" onclick="triggerSound('3l.mp3')">3L</button>
+                    <button class="sound-btn" onclick="triggerSound('10s.mp3')">10s</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_win.mp3')">Bonus Win</button>
+                    <button class="sound-btn" onclick="triggerSound('bonus_lose.mp3')">Bonus Lose</button>
+                    <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
+                    <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
+                    <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">⏹ Dừng âm thanh</button>
+                </div>
+            </div>
         </div>
 
-        <h3 style="margin-top: 20px; margin-bottom: 5px;">Sơ đồ 24 ô Nón Phụ</h3>
-        <div class="grid-6x4" id="subGridContainer"></div>
-    </div>
+        <!-- CỘT 2: ĐÈN KIM, ZOOM, LƯỢT & NÚT QUAY -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="section">
+                <h2>Điều khiển Đèn Kim</h2>
+                <div class="grid-pointer">
+                    <div class="pointer-control" style="background-color: red; color: #ffffff;">
+                        <span>Kim Đỏ:</span>
+                        <div>
+                            <button onclick="setPointer('red', 'on')" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #ffff00; color: #000000; font-weight: bold;">
+                        <span>Kim Vàng:</span>
+                        <div>
+                            <button onclick="setPointer('yellow', 'on')" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="setPointer('yellow', 'off')">Đóng</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #0000ff; color: #ffffff; font-weight: bold;">
+                        <span>Kim Xanh:</span>
+                        <div>
+                            <button onclick="setPointer('blue', 'on')" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #4b5563; color: #ffffff;">
+                        <span>Ease Out:</span>
+                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: #ffffff; width: 100%;">Ease out</button>
+                    </div>
+                </div>
+                <div class="flex-row" style="margin-top: 4px;">
+                    <span style="font-size: 11px;">Zoom/Ease in:</span>
+                    <button onclick="easeTiltSubWheel('red')" style="background: red; color: #ffffff; flex: 1; font-weight: bold;">In Đỏ</button>
+                    <button onclick="zoomPointer('in')" style="background: #ffff00; color: #000000; flex: 1; font-weight: bold;">In Vàng</button>
+                    <button onclick="easeTiltSubWheel('blue')" style="background: #0000ff; color: #ffffff; flex: 1; font-weight: bold;">In Xanh</button>
+                </div>
+            </div>
 
-    <div class="section">
-        <h2>Điều khiển Nón Đặc Biệt</h2>
-        <div class="flex-row">
-            <label><input type="radio" name="specialPrize" value="100000" checked> 100.000 điểm</label>
-            <label><input type="radio" name="specialPrize" value="1000000"> 1.000.000 điểm</label>
-            <label><input type="radio" name="specialPrize" value="he_so"> Hệ số</label>
-            <button onclick="shuffleSpecialWheel()" style="background: blue; color: white;">Xáo giá trị</button>
-            <button onclick="showValue()" style="background: green; color: white;">Hiện giá trị ô quay vào</button>
-            <button onclick="findHighestWedge()" style="background: red; color: white;">Tìm ô cao nhất</button>
-            <button onclick="hideValue()" style="background: yellow; color: #000;">Ẩn giá trị</button>
+            <div class="section">
+                <h2>Lượt & Nút Quay Người Chơi</h2>
+                <div style="font-size: 11px; margin-bottom: 2px; color: #555;">Bật/Tắt Lượt:</div>
+                <div class="grid-pointer" style="margin-bottom: 4px;">
+                    <div class="pointer-control" style="background-color: red; color: #ffffff;">
+                        <span>Lượt Đỏ:</span>
+                        <div>
+                            <button onclick="setTurn('red', true)" style="background: green; color: #ffffff;">Set</button>
+                            <button class="btn-off" onclick="setTurn('red', false)">Off</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #ffff00; color: #000000; font-weight: bold;">
+                        <span>Lượt Vàng:</span>
+                        <div>
+                            <button onclick="setTurn('yellow', true)" style="background: green; color: #ffffff;">Set</button>
+                            <button class="btn-off" onclick="setTurn('yellow', false)">Off</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #0000ff; color: #ffffff; font-weight: bold;">
+                        <span>Lượt Xanh:</span>
+                        <div>
+                            <button onclick="setTurn('blue', true)" style="background: green; color: #ffffff;">Set</button>
+                            <button class="btn-off" onclick="setTurn('blue', false)">Off</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #333; color: #ffffff;">
+                        <span>Tất cả:</span>
+                        <div>
+                            <button onclick="setTurn('all', true)" style="background: green; color: #ffffff;">Set</button>
+                            <button class="btn-off" onclick="setTurn('all', false)">Off</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size: 11px; margin-bottom: 2px; color: #555;">Khóa/Mở Nút Quay:</div>
+                <div class="grid-pointer">
+                    <div class="pointer-control" style="background-color: red; color: #ffffff;">
+                        <span>Nút Đỏ:</span>
+                        <div>
+                            <button onclick="toggleSpinBtn('red', true)" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="toggleSpinBtn('red', false)">Khóa</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #ffff00; color: #000000; font-weight: bold;">
+                        <span>Nút Vàng:</span>
+                        <div>
+                            <button onclick="toggleSpinBtn('yellow', true)" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="toggleSpinBtn('yellow', false)">Khóa</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #0000ff; color: #ffffff; font-weight: bold;">
+                        <span>Nút Xanh:</span>
+                        <div>
+                            <button onclick="toggleSpinBtn('blue', true)" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="toggleSpinBtn('blue', false)">Khóa</button>
+                        </div>
+                    </div>
+                    <div class="pointer-control" style="background-color: #333; color: #ffffff;">
+                        <span>Tất cả:</span>
+                        <div>
+                            <button onclick="toggleSpinBtn('all', true)" style="background: green; color: #ffffff;">Mở</button>
+                            <button class="btn-off" onclick="toggleSpinBtn('all', false)">Khóa</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Hiển thị Thẻ & Ô (28 mục)</h2>
+                <div class="grid-4" id="itemsContainer"></div>
+            </div>
         </div>
 
-        <h3 style="margin-top: 20px; margin-bottom: 5px;">Sơ đồ 24 ô Nón Đặc Biệt</h3>
-        <div class="grid-6x4" id="specialGridContainer"></div>
-    </div>
+        <!-- CỘT 3: BẢNG ĐIỀU KHIỂN NGƯỜI CHƠI (ĐỎ, VÀNG, XANH) -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="section">
+                <h2>Bảng Điều Khiển Người Chơi</h2>
 
-    <div class="section">
-        <h2>Điều khiển Đèn Kim</h2>
-        <div class="grid-pointer">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Kim Đỏ:</span>
-                <button onclick="setPointer('red', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
-            </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Kim Vàng:</span>
-                <button onclick="setPointer('yellow', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('yellow', 'off')">Đóng</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Kim Xanh:</span>
-                <button onclick="setPointer('blue', 'on')" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
-            </div>
-            <div class="pointer-control" style="background-color: purple; color: #fff;">
-                <span>Zoom Kim:</span>
-                <button onclick="easeTiltSubWheel('red')" style="background: red; color: white;">Ease in Đỏ</button>
-                <button onclick="zoomPointer('in')" style="background: yellow; color: black;">Ease in Vàng</button>
-                <button onclick="easeTiltSubWheel('blue')" style="background: blue; color: white;">Ease in Xanh</button>
-                <button onclick="zoomPointer('out')" style="background: #ff00ff; color: white;">Ease out</button>
+                <!-- NC ĐỎ -->
+                <div class="player-control-block block-red">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <span style="color: red; font-size: 13px; font-weight: bold;">NC ĐỎ</span>
+                    </div>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-red-round-box" style="background: red; color: #ffffff; font-weight: bold;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-red-total-box" style="background: red; color: #ffffff; font-weight: bold;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px;">
+                        <input type="text" id="score-input-red" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
+                        <button onclick="modifyScore('red', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
+                        <button onclick="modifyScore('red', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
+                        <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
+                        <button onclick="modifyScoreMultiplier('red', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('red', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
+                        <button onclick="modifyScoreMultiplier('red', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-red" style="gap: 3px;"></div>
+                </div>
+
+                <!-- NC VÀNG -->
+                <div class="player-control-block block-yellow">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <span style="color: #ffff00; font-size: 13px; font-weight: bold;">NC VÀNG</span>
+                    </div>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-yellow-round-box" style="background: #ffff00; color: #000000; font-weight: bold;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-yellow-total-box" style="background: #ffff00; color: #000000; font-weight: bold;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px;">
+                        <input type="text" id="score-input-yellow" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
+                        <button onclick="modifyScore('yellow', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
+                        <button onclick="modifyScore('yellow', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
+                        <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-yellow" style="gap: 3px;"></div>
+                </div>
+
+                <!-- NC XANH -->
+                <div class="player-control-block block-blue">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                        <span style="color: #0000ff; font-size: 13px; font-weight: bold;">NC XANH</span>
+                    </div>
+                    <div class="score-display-row">
+                        <div class="score-info-box" id="ctrl-blue-round-box" style="background: #0000ff; color: #ffffff; font-weight: bold;">Điểm Vòng: 0</div>
+                        <div class="score-info-box" id="ctrl-blue-total-box" style="background: #0000ff; color: #ffffff; font-weight: bold;">Điểm Tổng: 0</div>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px;">
+                        <input type="text" id="score-input-blue" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
+                        <button onclick="modifyScore('blue', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
+                        <button onclick="modifyScore('blue', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
+                        <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
+                        <button onclick="modifyScoreMultiplier('blue', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('blue', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
+                        <button onclick="modifyScoreMultiplier('blue', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
+                        <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    </div>
+                    <div class="flex-row" id="cards-row-blue" style="gap: 3px;"></div>
+                </div>
+
+                <div class="flex-row" style="margin-top: 6px; border-top: 1px dashed #ccc; padding-top: 6px; justify-content: center; gap: 8px;">
+                    <button onclick="resetAllScores('round')" style="background: #800080; color: #ffffff; font-weight: bold; font-size: 11px; padding: 6px 12px;">Reset điểm vòng cả 3</button>
+                    <button onclick="resetAllScores('total')" style="background: #800080; color: #ffffff; font-weight: bold; font-size: 11px; padding: 6px 12px;">Reset điểm tổng cả 3</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="section">
-        <h2>Điều khiển Lượt & Nút Quay Người Chơi</h2>
-        <div class="grid-pointer" style="margin-bottom: 15px;">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Lượt Đỏ:</span>
-                <button onclick="setTurn('red', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('red', false)">Unset</button>
+        <!-- CỘT 4: NÓN PHỤ & NÓN ĐẶC BIỆT (KÈM SƠ ĐỒ 24 Ô) -->
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div class="section">
+                <h2>Điều khiển Nón Phụ</h2>
+                <div class="flex-row" style="gap: 3px;">
+                    <button onclick="shuffleSubWheel()" style="background: #0000ff; color: #ffffff; font-weight: bold; flex: 1;">Xáo nón phụ</button>
+                    <button onclick="showValue()" style="background: green; color: #ffffff; font-weight: bold; flex: 1;">Hiện giá trị</button>
+                    <button onclick="findHighestWedge()" style="background: red; color: #ffffff; font-weight: bold; flex: 1;">Tìm cao nhất</button>
+                    <button onclick="hideValue()" style="background: #ffff00; color: #000000; font-weight: bold; flex: 1;">Ẩn giá trị</button>
+                </div>
+                <div style="margin-top: 5px; font-size: 11px; color: #444;">Sơ đồ 24 ô Nón Phụ:</div>
+                <div class="grid-6x4" id="subGridContainer"></div>
             </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Lượt Vàng:</span>
-                <button onclick="setTurn('yellow', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('yellow', false)">Unset</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Lượt Xanh:</span>
-                <button onclick="setTurn('blue', true)" style="background: green;">Set</button>
-                <button class="btn-off" onclick="setTurn('blue', false)">Unset</button>
-            </div>
-            <div class="pointer-control" style="background-color: #333; color: #fff;">
-                <span>Tất cả:</span>
-                <button onclick="setTurn('all', true)" style="background: green;">Set All</button>
-                <button class="btn-off" onclick="setTurn('all', false)">Unset All</button>
+
+            <div class="section">
+                <h2>Điều khiển Nón Đặc Biệt</h2>
+                <div class="flex-row" style="gap: 4px; margin-bottom: 4px;">
+                    <label style="font-size: 11px;"><input type="radio" name="specialPrize" value="100000" checked> 100k</label>
+                    <label style="font-size: 11px;"><input type="radio" name="specialPrize" value="1000000"> 1M</label>
+                    <label style="font-size: 11px;"><input type="radio" name="specialPrize" value="he_so"> Hệ số</label>
+                </div>
+                <div class="flex-row" style="gap: 3px;">
+                    <button onclick="shuffleSpecialWheel()" style="background: #0000ff; color: #ffffff; font-weight: bold; flex: 1;">Xáo ĐB</button>
+                    <button onclick="showValue()" style="background: green; color: #ffffff; font-weight: bold; flex: 1;">Hiện trị</button>
+                    <button onclick="findHighestWedge()" style="background: red; color: #ffffff; font-weight: bold; flex: 1;">Tìm max</button>
+                    <button onclick="hideValue()" style="background: #ffff00; color: #000000; font-weight: bold; flex: 1;">Ẩn trị</button>
+                </div>
+                <div style="margin-top: 5px; font-size: 11px; color: #444;">Sơ đồ 24 ô Nón Đặc Biệt:</div>
+                <div class="grid-6x4" id="specialGridContainer"></div>
             </div>
         </div>
-        <div class="grid-pointer">
-            <div class="pointer-control" style="background-color: red; color: #fff;">
-                <span>Nút Đỏ:</span>
-                <button onclick="toggleSpinBtn('red', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('red', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: yellow; color: #000;">
-                <span>Nút Vàng:</span>
-                <button onclick="toggleSpinBtn('yellow', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('yellow', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: blue; color: #fff;">
-                <span>Nút Xanh:</span>
-                <button onclick="toggleSpinBtn('blue', true)" style="background: green;">Mở</button>
-                <button class="btn-off" onclick="toggleSpinBtn('blue', false)">Khóa</button>
-            </div>
-            <div class="pointer-control" style="background-color: #333; color: #fff;">
-                <span>Tất cả:</span>
-                <button onclick="toggleSpinBtn('all', true)" style="background: green;">Mở All</button>
-                <button class="btn-off" onclick="toggleSpinBtn('all', false)">Khóa All</button>
-            </div>
-        </div>
-    </div>
 
-    <div class="section">
-        <h2>Hiển thị Thẻ & Ô</h2>
-        <div class="grid-4" id="itemsContainer"></div>
-    </div>
-
-    <div class="section">
-        <h2>Bảng Điều Khiển Người Chơi</h2>
-
-        <div class="player-control-block block-red">
-            <h3 style="color: red; margin-top: 0;">NC ĐỎ</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-red-round-box" style="background: red;">Điểm Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-red-total-box" style="background: red;">Điểm Tổng: 0</div>
-            </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-red" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('red', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('red', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="modifyScoreMultiplier('red', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="modifyScoreMultiplier('red', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="modifyScoreMultiplier('red', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('red', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('red', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-red"></div>
-        </div>
-
-        <div class="player-control-block block-yellow">
-            <h3 style="color: yellow; margin-top: 0;">NC VÀNG</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-yellow-round-box" style="background: yellow; color: #000;">Điểm
-                    Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-yellow-total-box" style="background: yellow; color: #000;">Điểm
-                    Tổng: 0</div>
-            </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-yellow" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('yellow', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('yellow', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="modifyScoreMultiplier('yellow', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="modifyScoreMultiplier('yellow', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="modifyScoreMultiplier('yellow', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('yellow', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('yellow', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-yellow"></div>
-        </div>
-
-        <div class="player-control-block block-blue">
-            <h3 style="color: blue; margin-top: 0;">NC XANH</h3>
-            <div class="score-display-row">
-                <div class="score-info-box" id="ctrl-blue-round-box" style="background: blue;">Điểm Vòng: 0</div>
-                <div class="score-info-box" id="ctrl-blue-total-box" style="background: blue;">Điểm Tổng: 0</div>
-            </div>
-            <div class="flex-row" style="margin-bottom: 12px;">
-                <input type="text" id="score-input-blue" placeholder="Nhập số điểm" oninput="formatNumberInput(this)">
-                <button onclick="modifyScore('blue', 'total', 'add')" style="background: blue; color: white;">Tổng
-                    +</button>
-                <button onclick="modifyScore('blue', 'round', 'add')" style="background: yellow; color: black;">Vòng
-                    +</button>
-                <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: white;">Vòng
-                    -</button>
-                <button onclick="modifyScoreMultiplier('blue', 1.5)" style="background-color: #800080; color: white; font-weight: bold;">x1.5</button>
-                <button onclick="modifyScoreMultiplier('blue', 2)" style="background-color: #800080; color: white; font-weight: bold;">x2</button>
-                <button onclick="modifyScoreMultiplier('blue', 0.5)" style="background-color: #800080; color: white; font-weight: bold;">:2</button>
-                <button onclick="resetPlayerScore('blue', 'round')" style="background-color: #800080; color: white; font-weight: bold;">Reset vòng</button>
-                <button onclick="resetPlayerScore('blue', 'total')" style="background-color: #800080; color: white; font-weight: bold;">Reset tổng</button>
-            </div>
-            <div class="flex-row" id="cards-row-blue"></div>
-        </div>
-
-        <div class="flex-row"
-            style="margin-top: 25px; border-top: 2px dashed #ccc; padding-top: 15px; justify-content: center;">
-            <button onclick="resetAllScores('round')"
-                style="background: purple; font-size: 16px; padding: 12px 25px;">Reset điểm vòng</button>
-            <button onclick="resetAllScores('total')"
-                style="background: #ff00ff; font-size: 16px; padding: 12px 25px;">Reset điểm tổng</button>
-        </div>
     </div>
 
     <script>
@@ -452,6 +591,19 @@
         let globalTurns = { red: false, yellow: false, blue: false };
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
+
+        function setControllerActive(isActive) {
+            const allButtons = document.querySelectorAll('button');
+            allButtons.forEach(btn => {
+                if (btn.id !== 'btnCreateRoom') {
+                    btn.disabled = !isActive;
+                }
+            });
+            const allInputs = document.querySelectorAll('input');
+            allInputs.forEach(input => {
+                input.disabled = !isActive;
+            });
+        }
 
         function generateDigits(length) {
             let result = '';
@@ -469,26 +621,31 @@
             const el = document.getElementById('currentRoomInfo');
             if (!info || !info.room_id) {
                 el.style.display = 'block';
-                el.innerHTML = '<strong>Chưa chọn phòng.</strong> Tạo phòng mới hoặc truy cập Controller.html?roomid=MÃ_PHÒNG';
+                el.className = 'room-alert-inactive';
+                el.innerHTML = '<strong>⚠️ Chưa tạo phòng.</strong><br>Tất cả các nút điều khiển đang bị khóa. Hãy bấm <strong>"Tạo phòng mới"</strong> ở trên để bắt đầu.';
                 return;
             }
             const rid = info.room_id;
             el.style.display = 'block';
+            el.className = 'room-alert-active';
             el.innerHTML =
-                '<strong>Phòng hiện tại:</strong> ' + rid + '<br>' +
-                'Player 1 (Đỏ): <strong>' + info.p1_pass + '</strong> &nbsp;|&nbsp; ' +
-                'Player 2 (Vàng): <strong>' + info.p2_pass + '</strong> &nbsp;|&nbsp; ' +
-                'Player 3 (Xanh): <strong>' + info.p3_pass + '</strong><br>' +
-                '<a href="Wheel.html?roomid=' + rid + '" target="_blank">Wheel</a>' +
-                ' &nbsp;|&nbsp; <a href="Sub_Wheel.html?roomid=' + rid + '" target="_blank">Sub_Wheel</a>' +
-                ' &nbsp;|&nbsp; <a href="Player1.html?roomid=' + rid + '&auth=' + info.p1_pass + '" target="_blank">Player 1 (Đỏ)</a>' +
-                ' &nbsp;|&nbsp; <a href="Player2.html?roomid=' + rid + '&auth=' + info.p2_pass + '" target="_blank">Player 2 (Vàng)</a>' +
-                ' &nbsp;|&nbsp; <a href="Player3.html?roomid=' + rid + '&auth=' + info.p3_pass + '" target="_blank">Player 3 (Xanh)</a>';
+                '<strong>✅ Phòng hiện tại:</strong> <span style="font-size: 12px; color: #047857;">' + rid + '</span><br>' +
+                'P1 (Đỏ): <strong>' + info.p1_pass + '</strong> | ' +
+                'P2 (Vàng): <strong>' + info.p2_pass + '</strong> | ' +
+                'P3 (Xanh): <strong>' + info.p3_pass + '</strong><br>' +
+                '<div style="margin-top: 5px; display: flex; flex-wrap: wrap; gap: 4px;">' +
+                '<a href="Wheel.html?roomid=' + rid + '" target="_blank" style="background:#16a34a; color:#fff; padding:3px 6px; border-radius:3px; text-decoration:none; font-size:10.5px;">🎡 Wheel</a>' +
+                '<a href="Sub_Wheel.html?roomid=' + rid + '" target="_blank" style="background:#9333ea; color:#fff; padding:3px 6px; border-radius:3px; text-decoration:none; font-size:10.5px;">🔄 Sub_Wheel</a>' +
+                '<a href="Player1.html?roomid=' + rid + '&auth=' + info.p1_pass + '" target="_blank" style="background:red; color:#fff; padding:3px 6px; border-radius:3px; text-decoration:none; font-size:10.5px;">👤 P1 (Đỏ)</a>' +
+                '<a href="Player2.html?roomid=' + rid + '&auth=' + info.p2_pass + '" target="_blank" style="background:#ffff00; color:#000; padding:3px 6px; border-radius:3px; text-decoration:none; font-size:10.5px;">👤 P2 (Vàng)</a>' +
+                '<a href="Player3.html?roomid=' + rid + '&auth=' + info.p3_pass + '" target="_blank" style="background:#0000ff; color:#fff; padding:3px 6px; border-radius:3px; text-decoration:none; font-size:10.5px;">👤 P3 (Xanh)</a>' +
+                '</div>';
         }
 
         async function loadRoomInfo() {
             if (!roomId) {
                 renderCurrentRoomInfo(null);
+                setControllerActive(false);
                 return;
             }
             const { data, error } = await supabase
@@ -498,11 +655,14 @@
                 .single();
 
             if (error || !data) {
-                showRoomError('Không tìm thấy thông tin phòng!');
-                renderCurrentRoomInfo({ room_id: roomId, p1_pass: '---', p2_pass: '---', p3_pass: '---' });
+                showRoomError('Không tìm thấy thông tin phòng! Vui lòng tạo phòng mới.');
+                renderCurrentRoomInfo(null);
+                setControllerActive(false);
                 return;
             }
+            showRoomError('');
             renderCurrentRoomInfo(data);
+            setControllerActive(true);
         }
 
         async function createRoom() {
@@ -569,9 +729,9 @@
             });
 
             initChannel();
-            loadRoomState().then(function () {
-                syncScoresToWheel(false);
-            });
+            setControllerActive(true);
+            await loadRoomState();
+            syncScoresToWheel(false);
         }
 
         async function updateWheelStateFields(updates) {
@@ -714,10 +874,12 @@
         let currentRotation = 262.5;
 
         function toggleWheel(type, isShow) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('toggle_wheel', { type, isShow });
         }
 
         async function spinWheel() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             await syncRotationFromWheel();
 
             const timeInput = document.getElementById('spinTime').value;
@@ -745,12 +907,14 @@
         }
 
         function setPointer(pointerName, state) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('pointer_light', { pointerName, state });
             globalPointerLights[pointerName] = state;
             updateWheelStateFields({ pointerLights: globalPointerLights });
         }
 
         function zoomPointer(type) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             if (type === 'out') {
                 // Ease out: Về góc thẳng và bỏ Zoom
                 sendEvent('zoom_pointer', { type: 'out' });
@@ -763,11 +927,13 @@
         }
 
         function toggleItem(itemName, isShow) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('toggle_item', { itemName, isShow });
         }
 
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
         function shuffleSubWheel() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             // Range điểm cố định gồm chuẩn xác 24 ô theo yêu cầu:
             // 5x15k, 4x20k, 4x25k, 3x30k, 3x35k, 2x40k, 2x45k, 1x50k (Tổng = 24 ô)
             let baseWedges = [
@@ -804,16 +970,19 @@
                 cell.innerText = `Ô ${index + 1}\n${val.toLocaleString('vi-VN')} đ`;
 
                 // Thiết lập thuộc tính chữ trắng đậm chuẩn mực
-                cell.style.color = 'white';
+                cell.style.color = '#ffffff';
                 cell.style.fontWeight = 'bold';
 
                 // Xử lý phân bổ sơ đồ màu sắc theo yêu cầu đề bài
                 if (val === 50000) {
-                    cell.style.backgroundColor = 'purple'; // Ô 50.000 màu tím
+                    cell.style.backgroundColor = '#800080'; // Ô 50.000 màu tím #800080, chữ đậm trắng
+                    cell.style.color = '#ffffff';
                 } else if (val === 45000) {
                     cell.style.backgroundColor = '#ff00ff'; // Ô 45.000 màu ff00ff
+                    cell.style.color = '#ffffff';
                 } else {
                     cell.style.backgroundColor = 'red'; // Các ô còn lại màu đỏ
+                    cell.style.color = '#ffffff';
                 }
                 container.appendChild(cell);
             });
@@ -822,6 +991,7 @@
         let currentSpecialWedges = [];
 
         function shuffleSpecialWheel() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             const prizeRadio = document.querySelector('input[name="specialPrize"]:checked').value;
             let wedges = [];
             if (prizeRadio === "he_so") {
@@ -861,24 +1031,32 @@
                 cell.className = 'wedge-cell';
                 let displayStr = typeof val === 'number' ? `${val.toLocaleString('vi-VN')} đ` : val;
                 cell.innerText = `Ô ${index + 1}\n${displayStr}`;
+                cell.style.fontWeight = 'bold';
                 let currentNum = parseVal(val);
                 if (currentNum === highestVal) {
-                    cell.style.backgroundColor = 'blue';
-                    cell.style.color = 'white';
+                    cell.style.backgroundColor = '#0000ff';
+                    cell.style.color = '#ffffff';
                 } else if (currentNum === secondHighestVal) {
                     cell.style.backgroundColor = 'green';
-                    cell.style.color = 'white';
+                    cell.style.color = '#ffffff';
                 } else {
-                    cell.style.backgroundColor = 'yellow';
-                    cell.style.color = 'black';
+                    cell.style.backgroundColor = '#ffff00';
+                    cell.style.color = '#000000';
                 }
                 container.appendChild(cell);
             });
         }
 
-        function showValue() { sendEvent('show_value', {}); }
-        function hideValue() { sendEvent('hide_value', {}); }
+        function showValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            sendEvent('show_value', {});
+        }
+        function hideValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            sendEvent('hide_value', {});
+        }
         function findHighestWedge() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             const startTime = Date.now();
             sendEvent('find_highest', { startTime });
         }
@@ -941,6 +1119,7 @@
         }
 
         function modifyScore(color, type, operation) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             const inputEl = document.getElementById(`score-input-${color}`);
             // Loại bỏ tất cả dấu chấm trước khi tiến hành parse thành số nguyên xử lý tính toán
             let cleanValue = inputEl.value.replace(/\./g, "");
@@ -958,12 +1137,14 @@
         }
 
         function modifyScoreMultiplier(color, multiplier) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             let key = color + 'Round';
             globalScores[key] = Math.round(globalScores[key] * multiplier);
             syncScoresToWheel();
         }
 
         function resetPlayerScore(color, type) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             if (type === 'round') {
                 globalScores[color + 'Round'] = 0;
             } else if (type === 'total') {
@@ -973,6 +1154,7 @@
         }
 
         function resetAllScores(type) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             if (type === 'round') {
                 globalScores.redRound = 0;
                 globalScores.yellowRound = 0;
@@ -986,6 +1168,7 @@
         }
 
         function togglePlayerCardState(color, cardIdx) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             let currentState = !playerCardsState[color][cardIdx];
             playerCardsState[color][cardIdx] = currentState;
 
@@ -1011,6 +1194,7 @@
         }
 
         function resetWheelRotation() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             currentRotation = 262.5;
             sendEvent('reset_rotation', {});
             saveRoomState();
@@ -1018,6 +1202,7 @@
         }
 
         function setTurn(target, state) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('set_turn', { target, state });
             if (target === 'all') {
                 globalTurns.red = state;
@@ -1030,6 +1215,7 @@
         }
 
         function toggleSpinBtn(target, state) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('toggle_spin_btn', { target, state });
             if (target === 'all') {
                 globalSpinButtons.red = state;
@@ -1041,22 +1227,34 @@
             updateWheelStateFields({ spinButtons: globalSpinButtons });
         }
 
+        // Khởi tạo các thẻ người chơi
         initPlayerCardControls('red');
         initPlayerCardControls('yellow');
         initPlayerCardControls('blue');
 
-        loadRoomInfo();
-        initChannel();
-        loadRoomState().then(function () {
-            syncScoresToWheel(false);
-        });
+        // Mặc định khóa tất cả các nút khi chưa có phòng
+        setControllerActive(false);
+
+        if (roomId) {
+            initChannel();
+            loadRoomInfo().then(function () {
+                loadRoomState().then(function () {
+                    syncScoresToWheel(false);
+                });
+            });
+        } else {
+            renderCurrentRoomInfo(null);
+            setControllerActive(false);
+        }
 
         // BỔ SUNG: Hàm phát/dừng âm thanh theo phòng
         function triggerSound(soundFile) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('play_sound', { sound: soundFile, timestamp: Date.now() });
         }
 
         function easeTiltSubWheel(direction) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('tilt_sub_wheel', { direction: direction });
             updateWheelStateFields({ subWheelTilt: direction });
         }
