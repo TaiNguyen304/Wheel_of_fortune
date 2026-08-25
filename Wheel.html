@@ -61,10 +61,10 @@
         }
 
         .view-btn.active {
-            background: #ffd700 !important;
-            color: black !important;
-            border-color: white;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+            background: #ffff00 !important;
+            color: #000000 !important;
+            border-color: #ffffff;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.6);
         }
 
         #view-wheel {
@@ -370,8 +370,8 @@
 <body>
 
     <div class="view-navigation" id="viewNav">
-        <button id="btn-view-wheel" class="view-btn active" onclick="switchView('wheel')">🎡 View 1: Vòng quay</button>
-        <button id="btn-view-scores" class="view-btn" onclick="switchView('scores')">📊 View 2: Điểm số</button>
+        <button id="btn-view-wheel" class="view-btn active" onclick="switchView('wheel')">View 1: Vòng quay</button>
+        <button id="btn-view-scores" class="view-btn" onclick="switchView('scores')">View 2: Điểm số</button>
     </div>
 
     <!-- VIEW 1: VÒNG QUAY -->
@@ -638,7 +638,6 @@
             }
         }
 
-        const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('view') === 'scores') {
             switchView('scores');
         }
