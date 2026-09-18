@@ -82,18 +82,18 @@
 
         button:hover {
             background: orange !important;
-            color: #ffffff !important;
+            color: #000000 !important;
         }
 
         button.btn-off {
             background: #ff00ff;
-            color: #ffffff;
+            color: #000000;
             font-weight: bold;
         }
 
         button.btn-off:hover {
             background: orange !important;
-            color: #ffffff !important;
+            color: #000000 !important;
         }
 
         input[type="number"],
@@ -254,7 +254,33 @@
 
         .sound-btn:hover {
             background: orange !important;
-            color: #fff !important;
+            color: #000000 !important;
+        }
+
+        .btn-safe-card {
+            background: #000000;
+            color: #ffffff;
+            border: 1px solid #666;
+            border-radius: 3px;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 5px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: 0.15s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .btn-safe-card.active-safe-card {
+            background: #008000 !important;
+            color: #ffffff !important;
+            border-color: #ffffff;
+        }
+
+        .btn-safe-card:hover {
+            background: orange !important;
+            color: #000000 !important;
         }
 
         .sound-btn.stop-btn {
@@ -322,7 +348,7 @@
                 <div class="flex-row" style="margin-top: 6px;">
                     <label style="font-size: 11px;">TG quay (5-20s):</label>
                     <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10" style="width: 55px;">
-                    <button onclick="spinWheel()" style="flex: 1; background: #ff00ff; color: #ffffff; font-weight: bold;">Quay Nón</button>
+                    <button onclick="spinWheel()" style="flex: 1; background: #ff00ff; color: #000000; font-weight: bold;">Quay Nón</button>
                 </div>
             </div>
 
@@ -349,6 +375,19 @@
                     <button class="sound-btn" onclick="triggerSound('bankrupt.mp3')">Bankrupt</button>
                     <button class="sound-btn" onclick="triggerSound('Closing.mp3')">Closing</button>
                     <button class="sound-btn stop-btn" onclick="triggerSound('STOP')">⏹ Dừng âm thanh</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Ô Độc đắc</h2>
+                <div id="jackpotDisplayBox" style="padding: 6px 8px; font-size: 13px; text-align: center; background: #800080; color: #ffffff; border-radius: 4px; font-weight: bold; margin-bottom: 5px;">
+                    Độc đắc: 0 đ
+                </div>
+                <div class="flex-row">
+                    <input type="text" id="jackpotInput" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="flex: 1; min-width: 60px;">
+                    <button onclick="setJackpotValue()" style="background: #0000ff; color: #ffffff; font-weight: bold;">Set</button>
+                    <button onclick="modifyJackpotValue('add')" style="background: green; color: #ffffff; font-weight: bold;">+</button>
+                    <button onclick="modifyJackpotValue('sub')" style="background: red; color: #ffffff; font-weight: bold;">-</button>
                 </div>
             </div>
         </div>
@@ -381,7 +420,7 @@
                     </div>
                     <div class="pointer-control" style="background-color: #4b5563; color: #ffffff;">
                         <span>Ease Out:</span>
-                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: #ffffff; width: 100%;">Ease out</button>
+                        <button onclick="zoomPointer('out')" style="background: #ff00ff; color: #000000; width: 100%; font-weight: bold;">Ease out</button>
                     </div>
                 </div>
                 <div class="flex-row" style="margin-top: 4px;">
@@ -461,6 +500,17 @@
             <div class="section">
                 <h2>Hiển thị Thẻ & Ô (28 mục)</h2>
                 <div class="grid-4" id="itemsContainer"></div>
+            </div>
+
+            <div class="section">
+                <h2>Ô Ẩn số</h2>
+                <div id="mysteryNumberDisplayBox" style="padding: 6px 8px; font-size: 13px; text-align: center; background: #1a1a1a; color: #ffff00; border: 1px solid #ffff00; border-radius: 4px; font-weight: bold; margin-bottom: 5px;">
+                    Ẩn số: 5.000
+                </div>
+                <div class="flex-row" style="gap: 4px;">
+                    <button onclick="randomMysteryNumber()" style="flex: 1; background: #0000ff; color: #ffffff; font-weight: bold;">Random</button>
+                    <button onclick="setMysteryNumber1000()" style="flex: 1; background: green; color: #ffffff; font-weight: bold;">Set 1.000</button>
+                </div>
             </div>
         </div>
 
@@ -543,9 +593,30 @@
                     <button onclick="resetAllScores('total')" style="background: #800080; color: #ffffff; font-weight: bold; font-size: 11px; padding: 6px 12px;">Reset điểm tổng cả 3</button>
                 </div>
             </div>
+
+            <div class="section">
+                <h2>Ô Két sắt</h2>
+                <div id="safeDisplayBox" style="padding: 6px 8px; font-size: 13px; text-align: center; background: #000000; color: #ffffff; border: 1px solid #ffffff; border-radius: 4px; font-weight: bold; margin-bottom: 5px;">
+                    Két sắt: 0 đ
+                </div>
+                <div class="flex-row" style="margin-bottom: 5px;">
+                    <input type="text" id="safeInput" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="flex: 1; min-width: 60px;">
+                    <button onclick="setSafeValue()" style="background: #0000ff; color: #ffffff; font-weight: bold;">Set</button>
+                    <button onclick="modifySafeValue('add')" style="background: green; color: #ffffff; font-weight: bold;">+</button>
+                    <button onclick="modifySafeValue('sub')" style="background: red; color: #ffffff; font-weight: bold;">-</button>
+                </div>
+                <div style="font-size: 11px; margin-bottom: 3px; color: #555;">Các thẻ Két sắt:</div>
+                <div class="flex-row" style="gap: 3px; flex-wrap: wrap;" id="safeCardsRow">
+                    <button id="btn-safe-card-0" class="btn-safe-card" onclick="toggleSafeCard(0)">Thẻ 1/2 thứ 1</button>
+                    <button id="btn-safe-card-1" class="btn-safe-card" onclick="toggleSafeCard(1)">Thẻ 1/2 thứ 2</button>
+                    <button id="btn-safe-card-2" class="btn-safe-card" onclick="toggleSafeCard(2)">Thẻ Cơ hội</button>
+                    <button id="btn-safe-card-3" class="btn-safe-card" onclick="toggleSafeCard(3)">Thẻ nhân đôi</button>
+                    <button id="btn-safe-card-4" class="btn-safe-card" onclick="toggleSafeCard(4)">Ô 1 Triệu</button>
+                </div>
+            </div>
         </div>
 
-        <!-- CỘT 4: NÓN PHỤ & NÓN ĐẶC BIỆT (KÈM SƠ ĐỒ 24 Ô) -->
+        <!-- CỘT 4: NÓN PHỤ & NÓN ĐẶC BIỆT, Ô BÍ MẬT & Ô TĂNG TỐC -->
         <div style="display: flex; flex-direction: column; gap: 6px;">
             <div class="section">
                 <h2>Điều khiển Nón Phụ</h2>
@@ -574,6 +645,45 @@
                 </div>
                 <div style="margin-top: 5px; font-size: 11px; color: #444;">Sơ đồ 24 ô Nón Đặc Biệt:</div>
                 <div class="grid-6x4" id="specialGridContainer"></div>
+            </div>
+
+            <div class="section">
+                <h2>Ô Bí Mật</h2>
+                <!-- Hàng 1: 2 ô chứa Đỏ BM Cam và Vàng BM Trắng -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 4px;">
+                    <div style="padding: 6px 4px; text-align: center; border-radius: 4px; background: red; color: #ffffff; font-weight: bold; font-size: 11px; border: 1px solid #ff9900;">
+                        Đỏ BM Cam
+                    </div>
+                    <div style="padding: 6px 4px; text-align: center; border-radius: 4px; background: #ffff00; color: #000000; font-weight: bold; font-size: 11px; border: 1px solid #ffffff;">
+                        Vàng BM Trắng
+                    </div>
+                </div>
+                <!-- Hàng 2: Giá trị của 2 ô đó -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-bottom: 5px;">
+                    <div id="secretBoxVal1" style="padding: 6px 4px; text-align: center; border-radius: 4px; background: #1a1a1a; color: #ffff00; font-weight: bold; font-size: 12px; border: 1px solid #666;">
+                        10.000
+                    </div>
+                    <div id="secretBoxVal2" style="padding: 6px 4px; text-align: center; border-radius: 4px; background: #1a1a1a; color: #ffffff; font-weight: bold; font-size: 12px; border: 1px solid #666;">
+                        Mất điểm
+                    </div>
+                </div>
+                <!-- Hàng 3: 2 nút Ẩn/Hiện, Random -->
+                <div class="flex-row" style="gap: 4px;">
+                    <button onclick="toggleSecretBoxesVisibility()" style="flex: 1; background: #800080; color: #ffffff; font-weight: bold;" id="btnToggleSecret">Ẩn/Hiện</button>
+                    <button onclick="randomSecretBoxes()" style="flex: 1; background: #0000ff; color: #ffffff; font-weight: bold;">Random</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Ô Tăng tốc</h2>
+                <div id="speedUpDisplayBox" style="padding: 6px 8px; font-size: 13px; text-align: center; background: #800080; color: #ffffff; border-radius: 4px; font-weight: bold; margin-bottom: 5px;">
+                    Tăng tốc: 0 đ
+                </div>
+                <div class="flex-row">
+                    <input type="text" id="speedUpInput" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="flex: 1; min-width: 60px;">
+                    <button onclick="setSpeedUpValue()" style="background: #0000ff; color: #ffffff; font-weight: bold;">Set</button>
+                    <button onclick="addRandomSpeedUpValue()" style="background: green; color: #ffffff; font-weight: bold;" title="Cộng ngẫu nhiên 50 - 1.000 (bội số của 50)">+</button>
+                </div>
             </div>
         </div>
 
@@ -795,6 +905,22 @@
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
                 }
+                if (data.wheel_state.custom_game_data) {
+                    const c = data.wheel_state.custom_game_data;
+                    if (c.jackpotScore !== undefined) jackpotScore = c.jackpotScore;
+                    if (c.currentMysteryNumber !== undefined) currentMysteryNumber = c.currentMysteryNumber;
+                    if (c.safeScore !== undefined) safeScore = c.safeScore;
+                    if (c.safeCardsState !== undefined) safeCardsState = c.safeCardsState;
+                    if (c.secretBox1 !== undefined) secretBox1 = c.secretBox1;
+                    if (c.secretBox2 !== undefined) secretBox2 = c.secretBox2;
+                    if (c.secretBoxesHidden !== undefined) secretBoxesHidden = c.secretBoxesHidden;
+                    if (c.speedUpScore !== undefined) speedUpScore = c.speedUpScore;
+                    updateJackpotDisplay();
+                    updateMysteryNumberDisplay();
+                    updateSafeDisplay();
+                    updateSecretBoxesDisplay();
+                    updateSpeedUpDisplay();
+                }
             }
             syncScoresToWheel(false);
         }
@@ -813,6 +939,10 @@
 
         async function saveRoomState() {
             if (!roomId) return;
+            const customData = {
+                jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore
+            };
+            updateWheelStateFields({ custom_game_data: customData });
             await supabase.from('game_room_state').update({
                 scores: globalScores,
                 player_cards: playerCardsState,
@@ -979,7 +1109,7 @@
                     cell.style.color = '#ffffff';
                 } else if (val === 45000) {
                     cell.style.backgroundColor = '#ff00ff'; // Ô 45.000 màu ff00ff
-                    cell.style.color = '#ffffff';
+                    cell.style.color = '#000000';
                 } else {
                     cell.style.backgroundColor = 'red'; // Các ô còn lại màu đỏ
                     cell.style.color = '#ffffff';
@@ -1258,6 +1388,185 @@
             sendEvent('tilt_sub_wheel', { direction: direction });
             updateWheelStateFields({ subWheelTilt: direction });
         }
+
+        // ==========================================
+        // 1. Ô ĐỘC ĐẮC (Cột 1)
+        // ==========================================
+        let jackpotScore = 0;
+        function updateJackpotDisplay() {
+            const el = document.getElementById('jackpotDisplayBox');
+            if (el) el.innerText = "Độc đắc: " + jackpotScore.toLocaleString('vi-VN') + " đ";
+        }
+        function setJackpotValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const input = document.getElementById('jackpotInput');
+            const val = parseInt(input.value.replace(/\./g, ''));
+            if (!isNaN(val)) {
+                jackpotScore = val;
+                updateJackpotDisplay();
+                saveRoomState();
+            }
+            input.value = '';
+        }
+        function modifyJackpotValue(type) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const input = document.getElementById('jackpotInput');
+            const val = parseInt(input.value.replace(/\./g, ''));
+            if (!isNaN(val)) {
+                if (type === 'add') jackpotScore += val;
+                else if (type === 'sub') jackpotScore -= val;
+                updateJackpotDisplay();
+                saveRoomState();
+            }
+            input.value = '';
+        }
+
+        // ==========================================
+        // 2. Ô ẨN SỐ (Cột 2)
+        // ==========================================
+        const mysteryNumberOptions = ["5.000", "7.500", "25.000", "Mất lượt", "Mất Điểm"];
+        let currentMysteryNumber = "5.000";
+        function updateMysteryNumberDisplay() {
+            const el = document.getElementById('mysteryNumberDisplayBox');
+            if (el) el.innerText = "Ẩn số: " + currentMysteryNumber;
+        }
+        function randomMysteryNumber() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const idx = Math.floor(Math.random() * mysteryNumberOptions.length);
+            currentMysteryNumber = mysteryNumberOptions[idx];
+            updateMysteryNumberDisplay();
+            saveRoomState();
+        }
+        function setMysteryNumber1000() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            currentMysteryNumber = "1.000";
+            updateMysteryNumberDisplay();
+            saveRoomState();
+        }
+
+        // ==========================================
+        // 3. Ô KÉT SẮT (Cột 3)
+        // ==========================================
+        let safeScore = 0;
+        let safeCardsState = [false, false, false, false, false];
+        function updateSafeDisplay() {
+            const el = document.getElementById('safeDisplayBox');
+            if (el) el.innerText = "Két sắt: " + safeScore.toLocaleString('vi-VN') + " đ";
+            for (let i = 0; i < 5; i++) {
+                const btn = document.getElementById(`btn-safe-card-${i}`);
+                if (btn) {
+                    if (safeCardsState[i]) btn.classList.add('active-safe-card');
+                    else btn.classList.remove('active-safe-card');
+                }
+            }
+        }
+        function setSafeValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const input = document.getElementById('safeInput');
+            const val = parseInt(input.value.replace(/\./g, ''));
+            if (!isNaN(val)) {
+                safeScore = val;
+                updateSafeDisplay();
+                saveRoomState();
+            }
+            input.value = '';
+        }
+        function modifySafeValue(type) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const input = document.getElementById('safeInput');
+            const val = parseInt(input.value.replace(/\./g, ''));
+            if (!isNaN(val)) {
+                if (type === 'add') safeScore += val;
+                else if (type === 'sub') safeScore -= val;
+                updateSafeDisplay();
+                saveRoomState();
+            }
+            input.value = '';
+        }
+        function toggleSafeCard(idx) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            safeCardsState[idx] = !safeCardsState[idx];
+            updateSafeDisplay();
+            saveRoomState();
+        }
+
+        // ==========================================
+        // 4. Ô BÍ MẬT (Cột 4)
+        // ==========================================
+        let secretBox1 = "10.000";
+        let secretBox2 = "Mất điểm";
+        let secretBoxesHidden = false;
+
+        function updateSecretBoxesDisplay() {
+            const el1 = document.getElementById('secretBoxVal1');
+            const el2 = document.getElementById('secretBoxVal2');
+            if (!el1 || !el2) return;
+            if (secretBoxesHidden) {
+                el1.innerText = "❓ Ẩn";
+                el2.innerText = "❓ Ẩn";
+                el1.style.color = '#888888';
+                el2.style.color = '#888888';
+            } else {
+                el1.innerText = secretBox1;
+                el2.innerText = secretBox2;
+                el1.style.color = secretBox1 === '10.000' ? '#ffff00' : '#ffffff';
+                el2.style.color = secretBox2 === '10.000' ? '#ffff00' : '#ffffff';
+            }
+        }
+
+        function toggleSecretBoxesVisibility() {
+            secretBoxesHidden = !secretBoxesHidden;
+            updateSecretBoxesDisplay();
+            saveRoomState();
+        }
+
+        function randomSecretBoxes() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            // 50% khả năng giữ nguyên vị trí, 50% đổi vị trí cho nhau
+            if (Math.random() < 0.5) {
+                const temp = secretBox1;
+                secretBox1 = secretBox2;
+                secretBox2 = temp;
+            }
+            updateSecretBoxesDisplay();
+            saveRoomState();
+        }
+
+        // ==========================================
+        // 5. Ô TĂNG TỐC (Cột 4)
+        // ==========================================
+        let speedUpScore = 0;
+        function updateSpeedUpDisplay() {
+            const el = document.getElementById('speedUpDisplayBox');
+            if (el) el.innerText = "Tăng tốc: " + speedUpScore.toLocaleString('vi-VN') + " đ";
+        }
+        function setSpeedUpValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const input = document.getElementById('speedUpInput');
+            const val = parseInt(input.value.replace(/\./g, ''));
+            if (!isNaN(val)) {
+                speedUpScore = val;
+                updateSpeedUpDisplay();
+                saveRoomState();
+            }
+            input.value = '';
+        }
+        function addRandomSpeedUpValue() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            // Giá trị ngẫu nhiên từ 50 đến 1.000 và là bội số của 50
+            const randomStep = Math.floor(Math.random() * 20) + 1; // 1 -> 20
+            const addedVal = randomStep * 50; // 50 -> 1000
+            speedUpScore += addedVal;
+            updateSpeedUpDisplay();
+            saveRoomState();
+        }
+
+        // Cập nhật hiển thị mặc định ban đầu
+        updateJackpotDisplay();
+        updateMysteryNumberDisplay();
+        updateSafeDisplay();
+        updateSecretBoxesDisplay();
+        updateSpeedUpDisplay();
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {

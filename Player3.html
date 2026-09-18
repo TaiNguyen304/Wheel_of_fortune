@@ -93,6 +93,9 @@
             display: block;
             background-image: url('./Nón.png');
             position: relative;
+            will-change: transform;
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
         #specialValuePopup {
@@ -151,8 +154,8 @@
 
         .placed-item.is-card img {
             top: 15px;
-            width: 10.5%;
-            max-height: 55px;
+            width: 8.4%;
+            max-height: 44px;
             object-fit: contain;
             clip-path: none;
         }
@@ -211,7 +214,7 @@
 
         .pointer-body {
             position: absolute;
-            top: -57.5px;
+            top: -26px;
             left: 50%;
             transform: translateX(-50%);
             filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.4));
@@ -285,10 +288,10 @@
             width: 100%;
         }
 
-        /* HOVER TẤT CẢ CÁC NÚT RA MÀU ORANGE CHỮ ĐẬM TRẮNG */
+        /* HOVER TẤT CẢ CÁC NÚT RA MÀU ORANGE CHỮ ĐẬM ĐEN */
         button:not(:disabled):hover {
             background: orange !important;
-            color: white !important;
+            color: #000000 !important;
         }
 
         .zoom-buttons {
@@ -347,25 +350,25 @@
                 <div id="specialValuePopup">0 điểm</div>
                 <div class="pointer-wrapper wrapper-red">
                     <div class="pointer-body" id="pointer-red">
-                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z"
-                                fill="var(--p-color)" stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
+                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z"
+                                fill="var(--p-color)" stroke="white" stroke-width="1.8" stroke-linejoin="round" />
                         </svg>
                     </div>
                 </div>
                 <div class="pointer-wrapper wrapper-yellow">
                     <div class="pointer-body" id="pointer-yellow">
-                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z"
-                                fill="var(--p-color)" stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
+                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z"
+                                fill="var(--p-color)" stroke="white" stroke-width="1.8" stroke-linejoin="round" />
                         </svg>
                     </div>
                 </div>
                 <div class="pointer-wrapper wrapper-blue">
                     <div class="pointer-body" id="pointer-blue">
-                        <svg width="46" height="60" viewBox="0 0 46 60" style="display: block;">
-                            <path d="M23,60 C9,38 0,28 0,18 A23,18 0 0,1 46,18 C46,28 37,38 23,60 Z"
-                                fill="var(--p-color)" stroke="white" stroke-width="2" stroke-linejoin="round" />
+                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
+                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z"
+                                fill="var(--p-color)" stroke="white" stroke-width="1.8" stroke-linejoin="round" />
                         </svg>
                     </div>
                 </div>
@@ -386,7 +389,7 @@
             <button onclick="zoomLocal('yellow')" style="background: yellow; color: black;">Vàng</button>
             <button onclick="zoomLocal('blue')" style="background: blue;">Xanh</button>
         </div>
-        <button onclick="zoomLocal('out')" style="background: #ff00ff; margin-top: 5px;">Ease Out</button>
+        <button onclick="zoomLocal('out')" style="background: #ff00ff; color: #000000; font-weight: bold; margin-top: 5px;">Ease Out</button>
 
         <hr>
 
@@ -581,19 +584,20 @@
         }
 
         function executeSpin(duration, randomOffset, startTime, startRotFromSource, minRotations) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
             if (typeof lockLocalSpin === 'function') lockLocalSpin();
             isSpinningNow = true;
 
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
-                wheelGraphic.style.transitionProperty = 'none';
-                wheelGraphic.style.transitionDuration = '0s';
             }
 
             const startRotBase = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
-                ? parseFloat(startRotFromSource)
-                : getVisualRotation();
+                ? normalizeAngle(parseFloat(startRotFromSource))
+                : normalizeAngle(getVisualRotation());
 
             const spin = computeSpinTarget(startRotBase, duration, randomOffset, minRotations);
             const startRot = spin.startRot;
@@ -607,8 +611,6 @@
                 document.getElementById('specialValuePopup').style.display = 'none';
             }
 
-            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
-            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
             const startTimestamp = Date.now();
             const durationMs = finalDuration * 1000;
 
@@ -621,21 +623,16 @@
                 const elapsed = now - startTimestamp;
 
                 if (elapsed >= durationMs) {
-                    currentRotation = targetRot;
-                    wheelGraphic.style.transition = 'none';
-                    wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                    const finalNorm = normalizeAngle(targetRot);
+                    currentRotation = finalNorm;
+                    wheelGraphic.style.transform = `rotate(${finalNorm}deg)`;
                     animationFrameId = null;
                     isSpinningNow = false;
                 } else {
-                    if (elapsed < 0) {
-                        wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-                    } else {
-                        const t = elapsed / durationMs;
-                        const progress = easeOutQuint(t);
-                        const currentPos = startRot + (targetRot - startRot) * progress;
-                        wheelGraphic.style.transition = 'none';
-                        wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
-                    }
+                    const t = Math.min(Math.max(elapsed / durationMs, 0), 1);
+                    const progress = easeOutQuint(t);
+                    const currentPos = startRot + (targetRot - startRot) * progress;
+                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
                     animationFrameId = requestAnimationFrame(updateProgress);
                 }
             }
@@ -683,35 +680,39 @@
         }
 
         function executeFindHighest(startTime, targetRotFromSource, targetIndexFromSource) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
             if (!isSpecialMode || specialWedges.length === 0) return;
+
+            if (wheelGraphic) {
+                wheelGraphic.style.transition = 'none';
+            }
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace('x', '')) : v;
             let targetIndex;
             let targetRot;
 
+            const startRot = normalizeAngle(getVisualRotation());
+            wheelGraphic.style.transform = `rotate(${startRot}deg)`;
+
             if (targetRotFromSource !== undefined && targetRotFromSource !== null
                 && targetIndexFromSource !== undefined && targetIndexFromSource !== null) {
                 targetIndex = targetIndexFromSource;
-                targetRot = targetRotFromSource;
+                targetRot = startRot + (normalizeAngle(targetRotFromSource) - startRot + 360) % 360 + 1080;
             } else {
                 const numericValues = specialWedges.map(parseVal);
                 const maxVal = Math.max(...numericValues);
                 targetIndex = numericValues.indexOf(maxVal);
                 const targetCenterAngle = (targetIndex * 15) + 7.5;
-                const currentNormalized = normalizeAngle(getVisualRotation());
-                let targetAngleDiff = (360 - targetCenterAngle) - currentNormalized;
+                let targetAngleDiff = (360 - targetCenterAngle) - startRot;
                 if (targetAngleDiff <= 0) targetAngleDiff += 360;
-                targetRot = getVisualRotation() + targetAngleDiff + 1080;
+                targetRot = startRot + targetAngleDiff + 1080;
             }
-
-            const startRot = getVisualRotation();
-            currentRotation = targetRot;
 
             specialValuePopup.style.display = 'none';
 
-            // FIXED: Sử dụng thời gian nhận cục bộ của thiết bị để bắt đầu đếm ngược thời gian chạy hiệu ứng.
-            // Điều này giải quyết hoàn toàn sự lệch múi giờ/lệch clock (clock drift) giữa điện thoại và máy tính!
             const startTimestamp = Date.now();
             const durationMs = 4000;
 
@@ -724,8 +725,9 @@
                 const elapsed = now - startTimestamp;
 
                 if (elapsed >= durationMs) {
-                    wheelGraphic.style.transition = 'none';
-                    wheelGraphic.style.transform = `rotate(${targetRot}deg)`;
+                    const finalNorm = normalizeAngle(targetRot);
+                    currentRotation = finalNorm;
+                    wheelGraphic.style.transform = `rotate(${finalNorm}deg)`;
 
                     let realValue = specialWedges[targetIndex];
                     specialValuePopup.innerText = typeof realValue === 'number' ? realValue.toLocaleString() + " điểm" : realValue;
@@ -733,16 +735,11 @@
 
                     animationFrameId = null;
                 } else {
-                    if (elapsed < 0) {
-                        wheelGraphic.style.transform = `rotate(${startRot}deg)`;
-                    } else {
-                        const t = elapsed / durationMs;
-                        const progress = easeOutQuint(t);
-                        const currentPos = startRot + (targetRot - startRot) * progress;
+                    const t = Math.min(Math.max(elapsed / durationMs, 0), 1);
+                    const progress = easeOutQuint(t);
+                    const currentPos = startRot + (targetRot - startRot) * progress;
 
-                        wheelGraphic.style.transition = 'none';
-                        wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
-                    }
+                    wheelGraphic.style.transform = `rotate(${currentPos}deg)`;
                     animationFrameId = requestAnimationFrame(updateFindHighestProgress);
                 }
             }
