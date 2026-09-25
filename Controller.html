@@ -258,6 +258,44 @@
             color: #000000 !important;
         }
 
+        .grid-rewards-4col {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+            margin-top: 4px;
+        }
+
+        .reward-cell {
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            padding: 4px 2px;
+            text-align: center;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 38px;
+            transition: border-color 0.2s;
+        }
+
+        .reward-cell-num {
+            font-size: 9px;
+            font-weight: bold;
+            color: #fbbf24;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .reward-cell-val {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 1.1;
+            word-break: break-word;
+        }
+
         .btn-safe-card {
             background: #000000;
             color: #ffffff;
@@ -291,6 +329,13 @@
             padding: 6px;
         }
 
+        .sound-btn.stop-btn:hover {
+            background: orange !important;
+            color: #000000 !important;
+            grid-column: span 3;
+            font-size: 11px;
+            padding: 6px;
+        }
         /* Items container scrollable */
         #itemsContainer {
             max-height: 180px;
@@ -337,16 +382,34 @@
 
             <div class="section">
                 <h2>Điều khiển Nón</h2>
-                <div class="flex-row" style="gap: 3px;">
-                    <button onclick="toggleWheel('normal', true)">Hiện Nón</button>
-                    <button class="btn-off" onclick="toggleWheel('normal', false)">Ẩn Nón</button>
-                    <button onclick="toggleWheel('special', true)">Hiện Nón ĐB</button>
-                    <button class="btn-off" onclick="toggleWheel('special', false)">Ẩn Nón ĐB</button>
-                    <button onclick="toggleWheel('sub_wheel', true)" style="background-color: #800080; color: #ffffff; font-weight: bold;">Hiện Nón Phụ</button>
-                    <button class="btn-off" onclick="toggleWheel('sub_wheel', false)">Ẩn Nón Phụ</button>
-                    <button onclick="resetWheelRotation()" style="background-color: #800080; color: #ffffff; font-weight: bold; width: 100%; margin-top: 2px;">Reset Góc Quay</button>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin-bottom: 4px;">
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('normal', true)" style="flex: 1;">Hiện Nón</button>
+                        <button class="btn-off" onclick="toggleWheel('normal', false)" style="flex: 1;">Ẩn Nón</button>
+                    </div>
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('wheel_2', true)" style="flex: 1; background: #800080; color: #ffffff;">Hiện Nón 2</button>
+                        <button class="btn-off" onclick="toggleWheel('wheel_2', false)" style="flex: 1;">Ẩn Nón 2</button>
+                    </div>
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('wheel_3', true)" style="flex: 1; background: #800080; color: #ffffff;">Hiện Nón 3</button>
+                        <button class="btn-off" onclick="toggleWheel('wheel_3', false)" style="flex: 1;">Ẩn Nón 3</button>
+                    </div>
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('wheel_4', true)" style="flex: 1; background: #800080; color: #ffffff;">Hiện Nón 4</button>
+                        <button class="btn-off" onclick="toggleWheel('wheel_4', false)" style="flex: 1;">Ẩn Nón 4</button>
+                    </div>
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('special', true)" style="flex: 1;">Hiện Nón ĐB</button>
+                        <button class="btn-off" onclick="toggleWheel('special', false)" style="flex: 1;">Ẩn Nón ĐB</button>
+                    </div>
+                    <div class="flex-row" style="gap: 2px;">
+                        <button onclick="toggleWheel('sub_wheel', true)" style="flex: 1; background-color: #800080; color: #ffffff; font-weight: bold;">Hiện Nón Phụ</button>
+                        <button class="btn-off" onclick="toggleWheel('sub_wheel', false)" style="flex: 1;">Ẩn Nón Phụ</button>
+                    </div>
                 </div>
-                <div class="flex-row" style="margin-top: 6px;">
+                <button onclick="resetWheelRotation()" style="background-color: #800080; color: #ffffff; font-weight: bold; width: 100%; margin-bottom: 5px;">Reset Góc Quay</button>
+                <div class="flex-row">
                     <label style="font-size: 11px;">TG quay (5-20s):</label>
                     <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10" style="width: 55px;">
                     <button onclick="spinWheel()" style="flex: 1; background: #ff00ff; color: #000000; font-weight: bold;">Quay Nón</button>
@@ -686,6 +749,15 @@
                     <button onclick="addRandomSpeedUpValue()" style="background: green; color: #ffffff; font-weight: bold;" title="Cộng ngẫu nhiên 50 - 1.000 (bội số của 50)">+</button>
                 </div>
             </div>
+
+            <div class="section">
+                <h2>Phần thưởng</h2>
+                <div class="flex-row" style="margin-bottom: 5px;">
+                    <button onclick="randomRewards()" style="flex: 1; background: #0000ff; color: #ffffff; font-weight: bold; padding: 6px 10px;">🎲 Random</button>
+                </div>
+                <div style="font-size: 11px; margin-bottom: 3px; color: #444;">Bảng 24 ô (6 hàng x 4 cột):</div>
+                <div class="grid-rewards-4col" id="rewardsGridContainer"></div>
+            </div>
         </div>
 
     </div>
@@ -809,7 +881,7 @@
             await supabase.from('game_room_state').insert({
                 room_id: newRoomId,
                 wheel_state: {
-                    currentRotation: 262.5,
+                    currentRotation: 270,
                     isSpecialMode: false,
                     specialWedges: [],
                     wheelDisplay: 'block',
@@ -824,7 +896,7 @@
                 },
                 scores: defaultScores,
                 player_cards: defaultCards,
-                controller_rotation: 262.5
+                controller_rotation: 270
             });
 
             roomId = newRoomId;
@@ -906,6 +978,9 @@
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
                 }
+                if (data.wheel_state.itemsState) {
+                    globalItemsState = Object.assign(globalItemsState, data.wheel_state.itemsState);
+                }
                 if (data.wheel_state.custom_game_data) {
                     const c = data.wheel_state.custom_game_data;
                     if (c.jackpotScore !== undefined) jackpotScore = c.jackpotScore;
@@ -916,14 +991,24 @@
                     if (c.secretBox2 !== undefined) secretBox2 = c.secretBox2;
                     if (c.secretBoxesHidden !== undefined) secretBoxesHidden = c.secretBoxesHidden;
                     if (c.speedUpScore !== undefined) speedUpScore = c.speedUpScore;
+                    if (c.rewardBoxes && Array.isArray(c.rewardBoxes) && c.rewardBoxes.length === 24) {
+                        rewardBoxesState = [...c.rewardBoxes];
+                    }
                     updateJackpotDisplay();
                     updateMysteryNumberDisplay();
                     updateSafeDisplay();
                     updateSecretBoxesDisplay();
                     updateSpeedUpDisplay();
+                    renderRewardsGrid();
                 }
             }
             syncScoresToWheel(false);
+            if (roomId) {
+                const customData = {
+                    jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
+                };
+                sendEvent('sync_custom_data', customData);
+            }
         }
 
         async function syncRotationFromWheel() {
@@ -941,9 +1026,10 @@
         async function saveRoomState() {
             if (!roomId) return;
             const customData = {
-                jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore
+                jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
             };
             updateWheelStateFields({ custom_game_data: customData });
+            sendEvent('sync_custom_data', customData);
             await supabase.from('game_room_state').update({
                 scores: globalScores,
                 player_cards: playerCardsState,
@@ -979,12 +1065,20 @@
             channel.on('broadcast', { event: 'spin_wheel' }, function (payload) {
                 updateControllerRotationFromSpin(payload.payload);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
-                currentRotation = 262.5;
-                updateWheelStateFields({ currentRotation: 262.5 });
+                currentRotation = 270;
+                updateWheelStateFields({ currentRotation: 270 });
             }).on('broadcast', { event: 'find_highest' }, function (payload) {
                 if (payload.payload && payload.payload.targetRot !== undefined && payload.payload.targetRot !== null) {
                     currentRotation = parseFloat(payload.payload.targetRot);
                     updateWheelStateFields({ currentRotation: currentRotation });
+                }
+            }).on('broadcast', { event: 'request_sync' }, function () {
+                syncScoresToWheel(false);
+                if (roomId) {
+                    const customData = {
+                        jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
+                    };
+                    sendEvent('sync_custom_data', customData);
                 }
             });
             channel.subscribe();
@@ -1002,11 +1096,35 @@
             });
         }
 
-        let currentRotation = 262.5;
+        let currentRotation = 270;
+
+        let globalItemsState = {};
 
         function toggleWheel(type, isShow) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('toggle_wheel', { type, isShow });
+
+            let bg = "url('./Nón.png')";
+            let isSpecial = false;
+            if (type === 'special') {
+                bg = "url('./Nón Đặc Biệt.png')";
+                isSpecial = true;
+            } else if (type === 'sub_wheel') {
+                bg = "url('./Nón Phụ.png')";
+                isSpecial = true;
+            } else if (type === 'wheel_2') {
+                bg = "url('./Nón 2.png')";
+            } else if (type === 'wheel_3') {
+                bg = "url('./Nón 3.png')";
+            } else if (type === 'wheel_4') {
+                bg = "url('./Nón 4.png')";
+            }
+            updateWheelStateFields({
+                wheelDisplay: isShow ? 'block' : 'none',
+                wheelBg: bg,
+                isSpecialMode: isSpecial,
+                activeWheelType: type
+            });
         }
 
         async function spinWheel() {
@@ -1060,6 +1178,8 @@
         function toggleItem(itemName, isShow) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('toggle_item', { itemName, isShow });
+            globalItemsState[itemName] = isShow ? 'block' : 'none';
+            updateWheelStateFields({ itemsState: globalItemsState });
         }
 
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
@@ -1326,10 +1446,10 @@
 
         function resetWheelRotation() {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
-            currentRotation = 262.5;
+            currentRotation = 270;
             sendEvent('reset_rotation', {});
             saveRoomState();
-            updateWheelStateFields({ currentRotation: 262.5, popupDisplay: 'none' });
+            updateWheelStateFields({ currentRotation: 270, popupDisplay: 'none' });
         }
 
         function setTurn(target, state) {
@@ -1562,12 +1682,73 @@
             saveRoomState();
         }
 
+        // ==========================================
+        // 6. PHẦN THƯỞNG (Cột 4 - 24 ô, 6 hàng x 4 cột)
+        // ==========================================
+        const rewardItemsPool = [
+            "0", "50", "100", "200", "250", "300", "400", "500", "600", "700",
+            "750", "800", "900", "1.000", "1.250", "1.500", "1.750", "2.000",
+            "2.500", "x1.5", "x2", "Ngôi sao", "May rủi", "May mắn"
+        ];
+        let rewardBoxesState = [...rewardItemsPool];
+
+        function renderRewardsGrid() {
+            const container = document.getElementById('rewardsGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < 24; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'reward-cell';
+                cell.id = 'reward-cell-' + i;
+
+                const val = rewardBoxesState[i] !== undefined ? rewardBoxesState[i] : (i + 1);
+
+                const numEl = document.createElement('span');
+                numEl.className = 'reward-cell-num';
+                numEl.innerText = (i + 1);
+
+                const valEl = document.createElement('span');
+                valEl.className = 'reward-cell-val';
+                valEl.innerText = val;
+
+                if (val === 'Ngôi sao') {
+                    valEl.style.color = '#fbbf24';
+                } else if (val === 'May mắn') {
+                    valEl.style.color = '#34d399';
+                } else if (val === 'May rủi') {
+                    valEl.style.color = '#f87171';
+                } else if (val === 'x1.5' || val === 'x2') {
+                    valEl.style.color = '#e879f9';
+                }
+
+                cell.appendChild(numEl);
+                cell.appendChild(valEl);
+                container.appendChild(cell);
+            }
+        }
+
+        function randomRewards() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            // Fisher-Yates shuffle
+            const arr = [...rewardItemsPool];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                const temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+            rewardBoxesState = arr;
+            renderRewardsGrid();
+            saveRoomState();
+        }
+
         // Cập nhật hiển thị mặc định ban đầu
         updateJackpotDisplay();
         updateMysteryNumberDisplay();
         updateSafeDisplay();
         updateSecretBoxesDisplay();
         updateSpeedUpDisplay();
+        renderRewardsGrid();
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {

@@ -111,8 +111,8 @@
         }
 
         .wheel-container {
-            width: 500px;
-            height: 500px;
+            width: 470px;
+            height: 470px;
             position: relative;
         }
 
@@ -120,9 +120,11 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 5px solid white;
-            background-size: cover;
-            background-position: center;
+            box-sizing: border-box;
+            border: 18px solid #000000;
+            background-clip: padding-box;
+            background-size: 100% 100%;
+            background-position: center center;
             background-repeat: no-repeat;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             display: block;
@@ -130,7 +132,9 @@
             position: relative;
             will-change: transform;
             transform: translateZ(0);
+            transform-origin: center center !important;
             backface-visibility: hidden;
+            overflow: visible;
         }
 
         #specialValuePopup {
@@ -151,6 +155,27 @@
             white-space: nowrap;
         }
 
+        .wheel-center-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 176px;
+            height: 176px;
+            border-radius: 50%;
+            background-color: #008000;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Chỉ hiển thị vòng tròn tâm và các ô thẻ khi ở Nón thường */
+        .wheel-type-sub .wheel-center-circle,
+        .wheel-type-special .wheel-center-circle,
+        .wheel-type-sub .items-ring,
+        .wheel-type-special .items-ring {
+            display: none !important;
+        }
+
         .items-ring {
             position: absolute;
             top: 0;
@@ -159,6 +184,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 2;
+            transform-origin: center center !important;
         }
 
         .placed-item {
@@ -167,7 +193,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: center center;
+            transform-origin: center center !important;
             display: none;
         }
 
@@ -180,30 +206,31 @@
         }
 
         .placed-item.is-card img {
-            top: 15px;
-            width: 8.4%;
-            max-height: 44px;
+            top: 10px;
+            width: 8.5%;
+            max-height: 40px;
             object-fit: contain;
             clip-path: none;
         }
 
         .placed-item.is-wedge img {
-            top: 13px;
-            width: 13.5%;
-            height: 28%;
-            clip-path: polygon(0% 0%, 100% 0%, 78.25% 100%, 21.75% 100%);
-            object-fit: fill;
+            top: 3px;
+            width: 12.8%;
+            height: 29.3%;
+            object-fit: contain;
+            clip-path: none;
         }
 
         /* ĐÃ SỬA CÂN BẰNG TUYỆT ĐỐI VÒNG CHẤM TRÒN */
         .dots-ring {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -18px;
+            left: -18px;
+            width: calc(100% + 36px);
+            height: calc(100% + 36px);
             pointer-events: none;
             z-index: 5;
+            transform-origin: center center !important;
         }
 
         .dot-wrapper {
@@ -212,19 +239,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: center center;
+            transform-origin: center center !important;
         }
 
         .dot {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             background-color: #ffffff;
             border-radius: 50%;
-            top: 3.5px;
+            top: 6px;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
         }
 
         .pointer-wrapper {
@@ -367,6 +394,224 @@
             color: white !important;
             border-color: #000000;
         }
+
+        /* VIEW 3: PHẦN THƯỞNG & Ô ĐẶC BIỆT */
+        #view-custom {
+            width: 100%;
+            height: 100%;
+            display: none;
+            justify-content: center;
+            align-items: flex-start;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 70px 20px 30px 20px;
+            overflow-y: auto;
+            box-sizing: border-box;
+            background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+        }
+
+        .custom-view-container {
+            width: 100%;
+            max-width: 960px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            z-index: 10;
+            margin: 0 auto;
+        }
+
+        .special-boxes-dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .v3-card {
+            background: rgba(15, 23, 42, 0.75);
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+        }
+
+        .v3-card-header {
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .v3-card-value {
+            font-size: 20px;
+            font-weight: 900;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .v3-card-jackpot {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(180, 83, 9, 0.35) 100%);
+        }
+        .v3-card-jackpot .v3-card-header {
+            color: #fbbf24;
+        }
+        .v3-card-jackpot .v3-card-value {
+            color: #fef08a;
+            font-size: 21px;
+        }
+
+        .v3-card-mystery {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(29, 78, 216, 0.35) 100%);
+        }
+        .v3-card-mystery .v3-card-header {
+            color: #60a5fa;
+        }
+        .v3-card-mystery .v3-card-value {
+            color: #ffffff;
+            font-size: 21px;
+        }
+
+        .v3-card-speedup {
+            border-color: #ec4899;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.25) 0%, rgba(190, 24, 93, 0.35) 100%);
+        }
+        .v3-card-speedup .v3-card-header {
+            color: #f472b6;
+        }
+        .v3-card-speedup .v3-card-value {
+            color: #fdf2f8;
+            font-size: 21px;
+        }
+
+        .v3-card-safe {
+            border-color: #10b981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(4, 120, 87, 0.3) 100%);
+        }
+        .v3-card-safe .v3-card-header {
+            color: #34d399;
+        }
+        .v3-card-safe .v3-card-value {
+            color: #a7f3d0;
+            font-size: 19px;
+            margin-bottom: 6px;
+        }
+
+        .v3-safe-cards-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .v3-safe-card {
+            padding: 3px 5px;
+            font-size: 9.5px;
+            font-weight: bold;
+            border-radius: 4px;
+            background: rgba(0, 0, 0, 0.65);
+            color: rgba(255, 255, 255, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .v3-safe-card.active {
+            background: #10b981 !important;
+            color: #ffffff !important;
+            border-color: #ffffff;
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.7);
+        }
+
+        /* BẢNG PHẦN THƯỞNG */
+        .v3-rewards-section {
+            background: rgba(15, 23, 42, 0.85);
+            border-radius: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.18);
+            padding: 16px 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .v3-rewards-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #fbbf24;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 12px rgba(251, 191, 36, 0.4);
+        }
+
+        .v3-rewards-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .v3-reward-cell {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .v3-reward-cell:hover {
+            border-color: #fbbf24;
+            transform: translateY(-1px);
+        }
+
+        .v3-reward-num {
+            background: #3b82f6;
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 13px;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .v3-reward-val {
+            font-size: 15px;
+            font-weight: 900;
+            color: #f8fafc;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            letter-spacing: 0.5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .special-boxes-dashboard {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .v3-rewards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
     </style>
 </head>
 
@@ -375,6 +620,7 @@
     <div class="view-navigation" id="viewNav">
         <button id="btn-view-wheel" class="view-btn active" onclick="switchView('wheel')">View 1: Vòng quay</button>
         <button id="btn-view-scores" class="view-btn" onclick="switchView('scores')">View 2: Điểm số</button>
+        <button id="btn-view-custom" class="view-btn" onclick="switchView('custom')">View 3: Phần thưởng</button>
     </div>
 
     <!-- VIEW 1: VÒNG QUAY -->
@@ -382,6 +628,7 @@
         <div class="wheel-area" id="wheelArea">
             <div class="wheel-container" id="wheelContainer">
                 <div id="wheelGraphic">
+                    <div class="wheel-center-circle"></div>
                     <div class="items-ring" id="itemsRing"></div>
                     <div class="dots-ring" id="dotsRing"></div>
                 </div>
@@ -494,6 +741,51 @@
         </div>
     </div>
 
+    <!-- VIEW 3: PHẦN THƯỞNG & Ô ĐẶC BIỆT -->
+    <div id="view-custom">
+        <div class="custom-view-container">
+            <!-- HÀNG CÁC Ô ĐẶC BIỆT (Độc đắc, Ẩn số, Tăng tốc, Két sắt & Thẻ) -->
+            <div class="special-boxes-dashboard">
+                <!-- Ô ĐỘC ĐẮC -->
+                <div class="v3-card v3-card-jackpot">
+                    <div class="v3-card-header">Ô Độc Đắc</div>
+                    <div class="v3-card-value" id="view3-jackpot">0 đ</div>
+                </div>
+
+                <!-- Ô ẨN SỐ -->
+                <div class="v3-card v3-card-mystery">
+                    <div class="v3-card-header">Ô Ẩn Số</div>
+                    <div class="v3-card-value" id="view3-mystery">5.000</div>
+                </div>
+
+                <!-- Ô TĂNG TỐC -->
+                <div class="v3-card v3-card-speedup">
+                    <div class="v3-card-header">Ô Tăng Tốc</div>
+                    <div class="v3-card-value" id="view3-speedup">0 đ</div>
+                </div>
+
+                <!-- Ô KÉT SẮT & CÁC THẺ -->
+                <div class="v3-card v3-card-safe">
+                    <div class="v3-card-header">Ô Két Sắt</div>
+                    <div class="v3-card-value" id="view3-safe-score">0 đ</div>
+                    <div class="v3-safe-cards-grid">
+                        <div class="v3-safe-card" id="view3-safe-card-0">Thẻ 1/2 (1)</div>
+                        <div class="v3-safe-card" id="view3-safe-card-1">Thẻ 1/2 (2)</div>
+                        <div class="v3-safe-card" id="view3-safe-card-2">Thẻ Cơ hội</div>
+                        <div class="v3-safe-card" id="view3-safe-card-3">Thẻ nhân đôi</div>
+                        <div class="v3-safe-card" id="view3-safe-card-4">Ô 1 Triệu</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BẢNG PHẦN THƯỞNG (24 Ô: 6 HÀNG X 4 CỘT) -->
+            <div class="v3-rewards-section">
+                <div class="v3-rewards-title">BẢNG PHẦN THƯỞNG</div>
+                <div class="v3-rewards-grid" id="view3-rewards-grid"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         var supabaseUrl = 'https://vjwwbzjzcbtkksehwfll.supabase.co';
         var supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqd3diemp6Y2J0a2tzZWh3ZmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5NDIyOTYsImV4cCI6MjA5NTUxODI5Nn0.Zcn4hvlLtRirM-SPGrFvu3ivu8RYF9WngvbxCMCGfh4';
@@ -531,7 +823,7 @@
             });
         }
 
-        let currentRotation = 0;
+        let currentRotation = 270;
         let isSpecialMode = false;
         let specialWedges = [];
         let isSpinningNow = false;
@@ -553,7 +845,14 @@
             if (!bg) return 'normal';
             if (bg.includes('Nón Phụ')) return 'sub_wheel';
             if (bg.includes('Đặc Biệt')) return 'special';
+            if (bg.includes('Nón 2')) return 'wheel_2';
+            if (bg.includes('Nón 3')) return 'wheel_3';
+            if (bg.includes('Nón 4')) return 'wheel_4';
             return 'normal';
+        }
+
+        function isRegularWheelType(type) {
+            return ['normal', 'wheel_2', 'wheel_3', 'wheel_4'].includes(type);
         }
 
         const wheelGraphic = document.getElementById('wheelGraphic');
@@ -562,34 +861,35 @@
         const specialValuePopup = document.getElementById('specialValuePopup');
 
         const itemsPlacementConfig = {
-            "Thẻ Phần thưởng": { angle: 22.5, img: "Thẻ Phần Thưởng.png" },
-            "Thẻ 1/2 thứ 1": { angle: 37.5, img: "Thẻ 12 thứ 1.png" },
-            "Thẻ 1/2 thứ 2": { angle: 247.5, img: "Thẻ 12 thứ 2.png" },
-            "Thẻ Cơ hội": { angle: 52.5, img: "Thẻ Cơ Hội.png" },
-            "Thẻ Nhân Đôi": { angle: 187.5, img: "Thẻ Nhân Đôi.png" },
-            "Thẻ Kháng Mất điểm": { angle: 112.5, img: "Thẻ Kháng Mất Điểm.png" },
-            "Thẻ Bảo vệ": { angle: 217.5, img: "Thẻ Bảo Vệ.png" },
-            "Thẻ Thêm lượt": { angle: 262.5, img: "Thẻ Thêm Lượt.png" },
-            "Ô Độc đắc": { angle: 142.5, img: "Ô Độc Đắc.png" },
-            "Ô Ẩn số": { angle: 322.5, img: "Ô Ẩn Số.png" },
-            "Ô Bí Mật 1": { angle: 157.5, img: "Ô Bí Mật 1.png" },
-            "Ô Bí Mật 2": { angle: 337.5, img: "Ô Bí Mật 2.png" },
-            "Ô Siêu Tốc": { angle: 142.5, img: "Ô Siêu Tốc.png" },
-            "Ô Thêm lượt": { angle: 322.5, img: "Ô Thêm Lượt.png" },
-            "Ô Két sắt": { angle: 142.5, img: "Ô Két Sắt.png" },
-            "Ô Thử Thách": { angle: 322.5, img: "Ô Thử Thách.png" },
-            "Ô Nhân đôi": { angle: 142.5, img: "Ô Nhân Đôi.png" },
-            "Ô Quy Đổi": { angle: 322.5, img: "Ô Quy Đổi.png" },
-            "Ô Đặt Cược": { angle: 142.5, img: "Ô Đặt Cược.png" },
-            "Ô Tăng Tốc": { angle: 322.5, img: "Ô Tăng Tốc.png" },
-            "Ô 1 Triệu": { angle: 172.5, img: "Ô 1 Triệu.png" },
-            "Ô Mất điểm": { angle: 82.5, img: "Ô Mất Điểm.png" },
-            "Ô 1.000": { angle: 97.5, img: "Ô 1000.png" },
-            "Ô 2.500": { angle: 97.5, img: "Ô 2500.png" },
-            "Ô 3.500": { angle: 97.5, img: "Ô 3500.png" },
-            "Ô 4.000": { angle: 97.5, img: "Ô 4000.png" },
-            "Ô Đổi điểm": { angle: 337.5, img: "Ô Đổi Điểm.png" },
-            "Ô Quyền năng": { angle: 157.5, img: "Ô Quyền Năng.png" }
+            "Thẻ Phần thưởng": { angle: 15, img: "Thẻ Phần Thưởng.png" },
+            "Thẻ 1/2 thứ 1": { angle: 30, img: "Thẻ 12 thứ 1.png" },
+            "Thẻ 1/2 thứ 2": { angle: 240, img: "Thẻ 12 thứ 2.png" },
+            "Thẻ Cơ hội": { angle: 45, img: "Thẻ Cơ Hội.png" },
+            "Thẻ Nhân Đôi": { angle: 180, img: "Thẻ Nhân Đôi.png" },
+            "Thẻ Kháng Mất điểm": { angle: 105, img: "Thẻ Kháng Mất Điểm.png" },
+            "Thẻ Bảo vệ": { angle: 210, img: "Thẻ Bảo Vệ.png" },
+            "Thẻ Thêm lượt": { angle: 255, img: "Thẻ Thêm Lượt.png" },
+            "Ô Độc đắc": { angle: 135, img: "Ô Độc Đắc.png" },
+            "Ô Ẩn số": { angle: 315, img: "Ô Ẩn Số.png" },
+            "Ô Bí Mật 1": { angle: 150, img: "Ô Bí Mật 1.png" },
+            "Ô Bí Mật 2": { angle: 330, img: "Ô Bí Mật 2.png" },
+            "Ô Siêu Tốc": { angle: 135, img: "Ô Siêu Tốc.png" },
+            "Ô Thêm lượt": { angle: 315, img: "Ô Thêm Lượt.png" },
+            "Ô Két sắt": { angle: 135, img: "Ô Két Sắt.png" },
+            "Ô Thử Thách": { angle: 315, img: "Ô Thử Thách.png" },
+            "Ô Nhân đôi": { angle: 135, img: "Ô Nhân Đôi.png" },
+            "Ô Quy Đổi": { angle: 315, img: "Ô Quy Đổi.png" },
+            "Ô Đặt Cược": { angle: 135, img: "Ô Đặt Cược.png" },
+            "Ô Tăng Tốc": { angle: 315, img: "Ô Tăng Tốc.png" },
+            "Ô 1 Triệu": { angle: 165, img: "Ô 1 Triệu.png" },
+            "Ô Mất điểm cố định": { angle: -75, img: "Ô Mất Điểm.png" },
+            "Ô Mất điểm": { angle: 75, img: "Ô Mất Điểm.png" },
+            "Ô 1.000": { angle: 90, img: "Ô 1000.png" },
+            "Ô 2.500": { angle: 90, img: "Ô 2500.png" },
+            "Ô 3.500": { angle: 90, img: "Ô 3500.png" },
+            "Ô 4.000": { angle: 90, img: "Ô 4000.png" },
+            "Ô Đổi điểm": { angle: 330, img: "Ô Đổi Điểm.png" },
+            "Ô Quyền năng": { angle: 150, img: "Ô Quyền Năng.png" }
         };
 
         Object.keys(itemsPlacementConfig).forEach(itemName => {
@@ -604,6 +904,12 @@
             itemWrapper.id = 'render-item-' + itemName.replace(/\s+/g, '_');
             itemWrapper.style.transform = `rotate(${config.angle}deg)`;
 
+            // Ô Mất điểm cố định gắn cứng trên Nón thường và không bao giờ bị ẩn khi ở Nón thường
+            if (itemName === "Ô Mất điểm cố định") {
+                itemWrapper.classList.add('is-fixed-wedge');
+                itemWrapper.style.display = 'block';
+            }
+
             const imgEl = document.createElement('img');
             imgEl.src = './' + config.img;
             imgEl.alt = itemName;
@@ -611,11 +917,30 @@
             itemsRing.appendChild(itemWrapper);
         });
 
+        function updateWheelElementsVisibility() {
+            const isRegular = isRegularWheelType(activeWheelType);
+            wheelGraphic.classList.remove('wheel-type-normal', 'wheel-type-sub', 'wheel-type-special', 'wheel-type-wheel_2', 'wheel-type-wheel_3', 'wheel-type-wheel_4');
+            wheelGraphic.classList.add('wheel-type-' + activeWheelType);
+
+            const circle = document.querySelector('.wheel-center-circle');
+            if (circle) {
+                circle.style.display = isRegular ? 'block' : 'none';
+            }
+            if (itemsRing) {
+                itemsRing.style.display = isRegular ? 'block' : 'none';
+            }
+            const fixedMatDiem = document.getElementById('render-item-Ô_Mất_điểm_cố_định');
+            if (fixedMatDiem) {
+                fixedMatDiem.style.display = isRegular ? 'block' : 'none';
+            }
+        }
+        updateWheelElementsVisibility();
+
         const dotsRing = document.getElementById('dotsRing');
         for (let i = 0; i < 72; i++) {
             const wrapper = document.createElement('div');
             wrapper.className = 'dot-wrapper';
-            wrapper.style.transform = `rotate(${i * 5}deg)`;
+            wrapper.style.transform = `rotate(${i * 5 - 7.5}deg)`;
             const dot = document.createElement('div');
             dot.className = 'dot';
             wrapper.appendChild(dot);
@@ -625,24 +950,137 @@
         function switchView(viewName) {
             const viewWheel = document.getElementById('view-wheel');
             const viewScores = document.getElementById('view-scores');
+            const viewCustom = document.getElementById('view-custom');
             const btnWheel = document.getElementById('btn-view-wheel');
             const btnScores = document.getElementById('btn-view-scores');
+            const btnCustom = document.getElementById('btn-view-custom');
+
+            viewWheel.style.display = 'none';
+            viewScores.style.display = 'none';
+            if (viewCustom) viewCustom.style.display = 'none';
+            btnWheel.classList.remove('active');
+            btnScores.classList.remove('active');
+            if (btnCustom) btnCustom.classList.remove('active');
 
             if (viewName === 'scores') {
-                viewWheel.style.display = 'none';
                 viewScores.style.display = 'flex';
                 btnScores.classList.add('active');
-                btnWheel.classList.remove('active');
+            } else if (viewName === 'custom' || viewName === 'rewards' || viewName === 'view3') {
+                if (viewCustom) viewCustom.style.display = 'flex';
+                if (btnCustom) btnCustom.classList.add('active');
             } else {
                 viewWheel.style.display = 'flex';
-                viewScores.style.display = 'none';
                 btnWheel.classList.add('active');
-                btnScores.classList.remove('active');
             }
         }
 
-        if (urlParams.get('view') === 'scores') {
+        const initialViewParam = urlParams.get('view');
+        if (initialViewParam === 'scores') {
             switchView('scores');
+        } else if (initialViewParam === 'custom' || initialViewParam === 'rewards' || initialViewParam === 'view3') {
+            switchView('custom');
+        }
+
+        const defaultRewardItems = [
+            "0", "50", "100", "200", "250", "300", "400", "500", "600", "700",
+            "750", "800", "900", "1.000", "1.250", "1.500", "1.750", "2.000",
+            "2.500", "x1.5", "x2", "Ngôi sao", "May rủi", "May mắn"
+        ];
+
+        function initView3RewardsGrid() {
+            const container = document.getElementById('view3-rewards-grid');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < 24; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'v3-reward-cell';
+                cell.id = 'view3-reward-cell-' + i;
+
+                const num = document.createElement('div');
+                num.className = 'v3-reward-num';
+                num.innerText = (i + 1);
+
+                const val = document.createElement('div');
+                val.className = 'v3-reward-val';
+                val.id = 'view3-reward-val-' + i;
+                const itemVal = defaultRewardItems[i] !== undefined ? defaultRewardItems[i] : (i + 1);
+                val.innerText = itemVal;
+
+                if (itemVal === 'Ngôi sao') {
+                    val.style.color = '#fbbf24';
+                } else if (itemVal === 'May mắn') {
+                    val.style.color = '#34d399';
+                } else if (itemVal === 'May rủi') {
+                    val.style.color = '#f87171';
+                } else if (itemVal === 'x1.5' || itemVal === 'x2') {
+                    val.style.color = '#e879f9';
+                }
+
+                cell.appendChild(num);
+                cell.appendChild(val);
+                container.appendChild(cell);
+            }
+        }
+        initView3RewardsGrid();
+
+        let currentCustomGameData = null;
+
+        function executeUpdateCustomData(data) {
+            if (!data) return;
+            currentCustomGameData = Object.assign({}, currentCustomGameData || {}, data);
+            // 1. Ô Độc đắc
+            if (data.jackpotScore !== undefined) {
+                const el = document.getElementById('view3-jackpot');
+                if (el) el.innerText = (typeof data.jackpotScore === 'number' ? data.jackpotScore.toLocaleString('vi-VN') : data.jackpotScore) + " đ";
+            }
+            // 2. Ô Ẩn số
+            if (data.currentMysteryNumber !== undefined) {
+                const el = document.getElementById('view3-mystery');
+                if (el) el.innerText = data.currentMysteryNumber;
+            }
+            // 3. Ô Tăng tốc
+            if (data.speedUpScore !== undefined) {
+                const el = document.getElementById('view3-speedup');
+                if (el) el.innerText = (typeof data.speedUpScore === 'number' ? data.speedUpScore.toLocaleString('vi-VN') : data.speedUpScore) + " đ";
+            }
+            // 4. Ô Két sắt & các thẻ Két sắt
+            if (data.safeScore !== undefined) {
+                const el = document.getElementById('view3-safe-score');
+                if (el) el.innerText = (typeof data.safeScore === 'number' ? data.safeScore.toLocaleString('vi-VN') : data.safeScore) + " đ";
+            }
+            if (data.safeCardsState && Array.isArray(data.safeCardsState)) {
+                for (let i = 0; i < 5; i++) {
+                    const cardEl = document.getElementById('view3-safe-card-' + i);
+                    if (cardEl) {
+                        if (data.safeCardsState[i]) {
+                            cardEl.classList.add('active');
+                        } else {
+                            cardEl.classList.remove('active');
+                        }
+                    }
+                }
+            }
+            // 5. Giá trị các phần thưởng (24 ô)
+            if (data.rewardBoxes && Array.isArray(data.rewardBoxes)) {
+                for (let i = 0; i < 24; i++) {
+                    const valEl = document.getElementById('view3-reward-val-' + i);
+                    if (valEl && data.rewardBoxes[i] !== undefined) {
+                        const val = data.rewardBoxes[i];
+                        valEl.innerText = val;
+                        if (val === 'Ngôi sao') {
+                            valEl.style.color = '#fbbf24';
+                        } else if (val === 'May mắn') {
+                            valEl.style.color = '#34d399';
+                        } else if (val === 'May rủi') {
+                            valEl.style.color = '#f87171';
+                        } else if (val === 'x1.5' || val === 'x2') {
+                            valEl.style.color = '#e879f9';
+                        } else {
+                            valEl.style.color = '#ffffff';
+                        }
+                    }
+                }
+            }
         }
 
         function buildWheelState() {
@@ -664,10 +1102,17 @@
                 itemsState: {}
             };
             Object.keys(itemsPlacementConfig).forEach(itemName => {
+                if (itemName === "Ô Mất điểm cố định") {
+                    state.itemsState[itemName] = 'block';
+                    return;
+                }
                 const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
                 const el = document.getElementById(targetId);
                 if (el) state.itemsState[itemName] = el.style.display;
             });
+            if (currentCustomGameData) {
+                state.custom_game_data = currentCustomGameData;
+            }
             return state;
         }
 
@@ -694,9 +1139,13 @@
             }).eq('room_id', roomId);
         }
 
+        function updateWheelBackgroundSize() {
+            wheelGraphic.style.backgroundSize = '100% 100%';
+        }
+
         function applyWheelState(state) {
             if (!state) return;
-            currentRotation = state.currentRotation || 0;
+            currentRotation = (state.currentRotation !== undefined && state.currentRotation !== null) ? state.currentRotation : 270;
             isSpecialMode = state.isSpecialMode || false;
             specialWedges = state.specialWedges || [];
 
@@ -705,6 +1154,7 @@
             wheelGraphic.style.display = state.wheelDisplay || 'block';
             wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
             activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+            updateWheelBackgroundSize();
 
             // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
             wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
@@ -722,11 +1172,14 @@
 
             if (state.itemsState) {
                 Object.keys(state.itemsState).forEach(itemName => {
+                    if (itemName === "Ô Mất điểm cố định") return; // Ô Mất điểm cố định gắn cứng trên Nón thường
                     const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
                     const el = document.getElementById(targetId);
                     if (el) el.style.display = state.itemsState[itemName];
                 });
             }
+
+            updateWheelElementsVisibility();
 
             // Sync pointer lights
             if (state.pointerLights) {
@@ -734,6 +1187,10 @@
                 ['red', 'yellow', 'blue'].forEach(pName => {
                     executePointerLight(pName, pointerLightsState[pName]);
                 });
+            }
+
+            if (state.custom_game_data) {
+                executeUpdateCustomData(state.custom_game_data);
             }
         }
 
@@ -746,6 +1203,9 @@
             if (data) {
                 if (data.wheel_state) {
                     try { applyWheelState(data.wheel_state); } catch (e) { console.error(e); }
+                    if (data.wheel_state.custom_game_data) {
+                        try { executeUpdateCustomData(data.wheel_state.custom_game_data); } catch (e) { console.error(e); }
+                    }
                 }
                 if (data.scores) {
                     try { executeUpdateScores(data.scores); } catch (e) { console.error(e); }
@@ -765,7 +1225,7 @@
         }
 
         function executeToggleItem(itemName, isShow) {
-            if (itemName === "Ô 5.000") return;
+            if (itemName === "Ô 5.000" || itemName === "Ô Mất điểm cố định") return;
             const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
             const itemElement = document.getElementById(targetId);
             if (itemElement) {
@@ -790,12 +1250,29 @@
                 wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
                 isSpecialMode = true;
                 activeWheelType = 'sub_wheel';
+            } else if (type === 'wheel_2') {
+                wheelGraphic.style.backgroundImage = "url('./Nón 2.png')";
+                isSpecialMode = false;
+                activeWheelType = 'wheel_2';
+                specialValuePopup.style.display = 'none';
+            } else if (type === 'wheel_3') {
+                wheelGraphic.style.backgroundImage = "url('./Nón 3.png')";
+                isSpecialMode = false;
+                activeWheelType = 'wheel_3';
+                specialValuePopup.style.display = 'none';
+            } else if (type === 'wheel_4') {
+                wheelGraphic.style.backgroundImage = "url('./Nón 4.png')";
+                isSpecialMode = false;
+                activeWheelType = 'wheel_4';
+                specialValuePopup.style.display = 'none';
             } else {
                 wheelGraphic.style.backgroundImage = "url('./Nón.png')";
                 isSpecialMode = false;
                 activeWheelType = 'normal';
                 specialValuePopup.style.display = 'none';
             }
+            updateWheelBackgroundSize();
+            updateWheelElementsVisibility();
             saveWheelState();
         }
 
@@ -877,9 +1354,9 @@
                 animationFrameId = null;
             }
             isSpinningNow = false;
-            currentRotation = 262.5;
+            currentRotation = 270;
             wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            wheelGraphic.style.transform = 'rotate(262.5deg)';
+            wheelGraphic.style.transform = 'rotate(270deg)';
             specialValuePopup.style.display = 'none';
             setTimeout(saveWheelState, 600);
         }
@@ -901,9 +1378,7 @@
             if (!isSpecialMode || specialWedges.length === 0) return "Chưa xáo giá trị";
             const rotation = getVisualRotation();
             let angleAtTop = normalizeAngle(360 - normalizeAngle(rotation));
-            let wedgeIndex = Math.floor(angleAtTop / 15);
-            if (wedgeIndex < 0) wedgeIndex = 0;
-            if (wedgeIndex > 23) wedgeIndex = 23;
+            let wedgeIndex = Math.floor(normalizeAngle(angleAtTop + 7.5) / 15) % 24;
             let result = specialWedges[wedgeIndex];
             return typeof result === 'number' ? result.toLocaleString() + " điểm" : result;
         }
@@ -948,7 +1423,7 @@
                 const numericValues = specialWedges.map(parseVal);
                 const maxVal = Math.max(...numericValues);
                 targetIndex = numericValues.indexOf(maxVal);
-                const targetCenterAngle = (targetIndex * 15) + 7.5;
+                const targetCenterAngle = targetIndex * 15;
                 let targetAngleDiff = (360 - targetCenterAngle) - startRot;
                 if (targetAngleDiff <= 0) targetAngleDiff += 360;
                 targetRot = startRot + targetAngleDiff + 1080;
@@ -1057,6 +1532,10 @@
                 executeUpdatePlayerCard(payload.payload.color, payload.payload.cardIdx, payload.payload.isActive);
             }).on('broadcast', { event: 'reset_rotation' }, function () {
                 executeResetRotation();
+            }).on('broadcast', { event: 'sync_custom_data' }, function (payload) {
+                if (payload && payload.payload) {
+                    executeUpdateCustomData(payload.payload);
+                }
             }).on('broadcast', { event: 'play_sound' }, function (payload) {
                 if (payload && payload.payload && payload.payload.sound) {
                     playSoundEffect(payload.payload.sound);
