@@ -85,8 +85,8 @@
             border-radius: 50%;
             box-sizing: border-box;
             border: 18px solid #000000;
-            background-clip: padding-box;
-            background-size: 100% 100%;
+            background-clip: border-box;
+            background-size: calc(100% + 7px) calc(100% + 7px);
             background-position: center center;
             background-repeat: no-repeat;
             transition-property: transform;
@@ -100,6 +100,22 @@
             transform-origin: center center !important;
             backface-visibility: hidden;
             overflow: visible;
+        }
+
+        #wheelGraphic.wheel-type-normal,
+        #wheelGraphic.wheel-type-wheel_2,
+        #wheelGraphic.wheel-type-wheel_3,
+        #wheelGraphic.wheel-type-wheel_4 {
+            background-size: calc(100% + 7px) calc(100% + 7px) !important;
+            background-position: center center !important;
+            background-clip: border-box !important;
+        }
+
+        #wheelGraphic.wheel-type-sub,
+        #wheelGraphic.wheel-type-special {
+            background-size: calc(100% + 10px) calc(100% + 10px) !important;
+            background-position: center center !important;
+            background-clip: border-box !important;
         }
 
         #specialValuePopup {
@@ -830,7 +846,14 @@
         }
 
         function updateWheelBackgroundSize() {
-            wheelGraphic.style.backgroundSize = '100% 100%';
+            const isRegular = isRegularWheelType(activeWheelType);
+            if (isRegular) {
+                wheelGraphic.style.backgroundSize = 'calc(100% + 7px) calc(100% + 7px)';
+            } else {
+                wheelGraphic.style.backgroundSize = 'calc(100% + 10px) calc(100% + 10px)';
+            }
+            wheelGraphic.style.backgroundClip = 'border-box';
+            wheelGraphic.style.backgroundPosition = 'center center';
         }
 
         function applyWheelState(state) {
