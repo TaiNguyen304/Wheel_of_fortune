@@ -1508,7 +1508,7 @@
         function easeTiltSubWheel(direction) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             sendEvent('tilt_sub_wheel', { direction: direction });
-            updateWheelStateFields({ subWheelTilt: direction });
+            updateWheelStateFields({ subWheelTilt: direction, zoomed: true });
         }
 
         // ==========================================

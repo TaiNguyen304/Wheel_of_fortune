@@ -90,6 +90,8 @@
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             transform: scale(1) rotate(0deg);
             margin-top: 0px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* 1. EASE IN VÀNG: Zoom x2, xoay 0 deg, đẩy khung hình lên trên để thấy rõ 3 kim */
@@ -114,43 +116,54 @@
             width: 470px;
             height: 470px;
             position: relative;
+            border-radius: 50%;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
         }
 
         #wheelGraphic {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            box-sizing: border-box;
-            border: 18px solid #000000;
-            background-clip: border-box;
-            background-size: calc(100% + 7px) calc(100% + 7px);
-            background-position: center center;
-            background-repeat: no-repeat;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             display: block;
-            background-image: url('./Nón.png');
             position: relative;
-            will-change: transform;
-            transform: translateZ(0);
-            transform-origin: center center !important;
-            backface-visibility: hidden;
+            transform-origin: 235px 235px !important;
             overflow: visible;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
+            -webkit-font-smoothing: antialiased;
         }
 
-        #wheelGraphic.wheel-type-normal,
-        #wheelGraphic.wheel-type-wheel_2,
-        #wheelGraphic.wheel-type-wheel_3,
-        #wheelGraphic.wheel-type-wheel_4 {
-            background-size: calc(100% + 7px) calc(100% + 7px) !important;
+        .wheel-face {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: calc(100% - 36px);
+            height: calc(100% - 36px);
+            border-radius: 50%;
+            background-image: url('./Nón.png');
             background-position: center center !important;
-            background-clip: border-box !important;
+            background-repeat: no-repeat;
+            background-size: 100% 100% !important;
+            transform-origin: center center !important;
+            pointer-events: none;
+            overflow: hidden;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
+            -webkit-font-smoothing: antialiased;
         }
 
-        #wheelGraphic.wheel-type-sub,
-        #wheelGraphic.wheel-type-special {
-            background-size: calc(100% + 10px) calc(100% + 10px) !important;
-            background-position: center center !important;
-            background-clip: border-box !important;
+        #wheelGraphic.wheel-type-sub .wheel-face,
+        #wheelGraphic.wheel-type-special .wheel-face {
+            background-size: 101.86% 101.86% !important;
+        }
+
+        #wheelGraphic.wheel-type-normal .wheel-face,
+        #wheelGraphic.wheel-type-wheel_2 .wheel-face,
+        #wheelGraphic.wheel-type-wheel_3 .wheel-face,
+        #wheelGraphic.wheel-type-wheel_4 .wheel-face {
+            background-size: 100% 100% !important;
         }
 
         #specialValuePopup {
@@ -171,22 +184,7 @@
             white-space: nowrap;
         }
 
-        .wheel-center-circle {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 176px;
-            height: 176px;
-            border-radius: 50%;
-            background-color: #008000;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Chỉ hiển thị vòng tròn tâm và các ô thẻ khi ở Nón thường */
-        .wheel-type-sub .wheel-center-circle,
-        .wheel-type-special .wheel-center-circle,
+        /* Chỉ hiển thị các ô thẻ khi ở Nón thường */
         .wheel-type-sub .items-ring,
         .wheel-type-special .items-ring {
             display: none !important;
@@ -194,10 +192,10 @@
 
         .items-ring {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 18px;
+            left: 18px;
+            width: calc(100% - 36px);
+            height: calc(100% - 36px);
             pointer-events: none;
             z-index: 2;
             transform-origin: center center !important;
@@ -218,56 +216,36 @@
             left: 50%;
             transform: translateX(-50%);
             object-fit: fill;
-            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.5));
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: high-quality;
         }
 
         .placed-item.is-card img {
-            top: 10px;
+            top: 6px;
             width: 8.5%;
-            max-height: 40px;
+            max-height: 38px;
             object-fit: contain;
             clip-path: none;
         }
 
         .placed-item.is-wedge img {
-            top: 3px;
-            width: 12.8%;
-            height: 29.3%;
-            object-fit: contain;
+            top: 0px;
+            width: 13.1%;
+            height: 30%;
+            object-fit: fill;
             clip-path: none;
         }
 
-        /* ĐÃ SỬA CÂN BẰNG TUYỆT ĐỐI VÒNG CHẤM TRÒN */
-        .dots-ring {
-            position: absolute;
-            top: -18px;
-            left: -18px;
-            width: calc(100% + 36px);
-            height: calc(100% + 36px);
-            pointer-events: none;
-            z-index: 5;
-            transform-origin: center center !important;
-        }
-
-        .dot-wrapper {
+        .wheel-ring-svg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: center center !important;
-        }
-
-        .dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            top: 6px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+            pointer-events: none;
+            z-index: 5;
+            transform-origin: 235px 235px !important;
+            shape-rendering: geometricPrecision;
         }
 
         .pointer-wrapper {
@@ -276,7 +254,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: center center;
+            transform-origin: 235px 235px !important;
             z-index: 10;
             pointer-events: none;
         }
@@ -295,10 +273,10 @@
 
         .pointer-body {
             position: absolute;
-            top: -26px;
-            left: 50%;
-            transform: translateX(-50%);
-            filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.4));
+            top: -12px;
+            left: calc(50% - 10px);
+            width: 20px;
+            height: 32px;
         }
 
         .pointer-body svg path {
@@ -644,32 +622,57 @@
         <div class="wheel-area" id="wheelArea">
             <div class="wheel-container" id="wheelContainer">
                 <div id="wheelGraphic">
-                    <div class="wheel-center-circle"></div>
+                    <div class="wheel-face" id="wheelFace"></div>
                     <div class="items-ring" id="itemsRing"></div>
-                    <div class="dots-ring" id="dotsRing"></div>
+                    <svg id="wheelRingSvg" class="wheel-ring-svg" viewBox="0 0 470 470" width="470" height="470">
+                        <defs>
+                            <filter id="dot-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                                <feDropShadow dx="0" dy="1" stdDeviation="0.75" flood-color="#000000" flood-opacity="0.85" />
+                            </filter>
+                        </defs>
+                        <!-- Vòng tròn đen chuẩn xác tuyệt đối (chuẩn hình tròn, không lệch tâm) -->
+                        <circle cx="235" cy="235" r="226" fill="none" stroke="#000000" stroke-width="18" shape-rendering="geometricPrecision" />
+                        <!-- 72 chấm tròn chuẩn xác nằm chính giữa dải viền đen -->
+                        <g id="svgDotsGroup"></g>
+                    </svg>
                 </div>
                 <div id="specialValuePopup">0 điểm</div>
                 <div class="pointer-wrapper wrapper-red">
                     <div class="pointer-body" id="pointer-red">
-                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
-                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z" fill="var(--p-color)"
-                                stroke="white" stroke-width="1.8" stroke-linejoin="round" />
+                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                            <defs>
+                                <filter id="p-shadow-red" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
+                                </filter>
+                            </defs>
+                            <path d="M 10,31 L 3.2,11.5 A 7.5,7.5 0 1,1 16.8,11.5 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="1.8" stroke-linejoin="round" filter="url(#p-shadow-red)" />
                         </svg>
                     </div>
                 </div>
                 <div class="pointer-wrapper wrapper-yellow">
                     <div class="pointer-body" id="pointer-yellow">
-                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
-                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z" fill="var(--p-color)"
-                                stroke="white" stroke-width="1.8" stroke-linejoin="round" />
+                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                            <defs>
+                                <filter id="p-shadow-yellow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
+                                </filter>
+                            </defs>
+                            <path d="M 10,31 L 3.2,11.5 A 7.5,7.5 0 1,1 16.8,11.5 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="1.8" stroke-linejoin="round" filter="url(#p-shadow-yellow)" />
                         </svg>
                     </div>
                 </div>
                 <div class="pointer-wrapper wrapper-blue">
                     <div class="pointer-body" id="pointer-blue">
-                        <svg width="22" height="44" viewBox="0 0 22 44" style="display: block;">
-                            <path d="M 11,43 L 1.5,13 A 9.5,9.5 0 1,1 20.5,13 Z" fill="var(--p-color)"
-                                stroke="white" stroke-width="1.8" stroke-linejoin="round" />
+                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                            <defs>
+                                <filter id="p-shadow-blue" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
+                                </filter>
+                            </defs>
+                            <path d="M 10,31 L 3.2,11.5 A 7.5,7.5 0 1,1 16.8,11.5 Z" fill="var(--p-color)"
+                                stroke="white" stroke-width="1.8" stroke-linejoin="round" filter="url(#p-shadow-blue)" />
                         </svg>
                     </div>
                 </div>
@@ -872,6 +875,7 @@
         }
 
         const wheelGraphic = document.getElementById('wheelGraphic');
+        const wheelFace = document.getElementById('wheelFace');
         const wheelArea = document.getElementById('wheelArea');
         const itemsRing = document.getElementById('itemsRing');
         const specialValuePopup = document.getElementById('specialValuePopup');
@@ -898,7 +902,6 @@
             "Ô Đặt Cược": { angle: 135, img: "Ô Đặt Cược.png" },
             "Ô Tăng Tốc": { angle: 315, img: "Ô Tăng Tốc.png" },
             "Ô 1 Triệu": { angle: 165, img: "Ô 1 Triệu.png" },
-            "Ô Mất điểm cố định": { angle: -75, img: "Ô Mất Điểm.png" },
             "Ô Mất điểm": { angle: 75, img: "Ô Mất Điểm.png" },
             "Ô 1.000": { angle: 90, img: "Ô 1000.png" },
             "Ô 2.500": { angle: 90, img: "Ô 2500.png" },
@@ -920,12 +923,6 @@
             itemWrapper.id = 'render-item-' + itemName.replace(/\s+/g, '_');
             itemWrapper.style.transform = `rotate(${config.angle}deg)`;
 
-            // Ô Mất điểm cố định gắn cứng trên Nón thường và không bao giờ bị ẩn khi ở Nón thường
-            if (itemName === "Ô Mất điểm cố định") {
-                itemWrapper.classList.add('is-fixed-wedge');
-                itemWrapper.style.display = 'block';
-            }
-
             const imgEl = document.createElement('img');
             imgEl.src = './' + config.img;
             imgEl.alt = itemName;
@@ -938,29 +935,29 @@
             wheelGraphic.classList.remove('wheel-type-normal', 'wheel-type-sub', 'wheel-type-special', 'wheel-type-wheel_2', 'wheel-type-wheel_3', 'wheel-type-wheel_4');
             wheelGraphic.classList.add('wheel-type-' + activeWheelType);
 
-            const circle = document.querySelector('.wheel-center-circle');
-            if (circle) {
-                circle.style.display = isRegular ? 'block' : 'none';
-            }
             if (itemsRing) {
                 itemsRing.style.display = isRegular ? 'block' : 'none';
-            }
-            const fixedMatDiem = document.getElementById('render-item-Ô_Mất_điểm_cố_định');
-            if (fixedMatDiem) {
-                fixedMatDiem.style.display = isRegular ? 'block' : 'none';
             }
         }
         updateWheelElementsVisibility();
 
-        const dotsRing = document.getElementById('dotsRing');
-        for (let i = 0; i < 72; i++) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'dot-wrapper';
-            wrapper.style.transform = `rotate(${i * 5 - 7.5}deg)`;
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            wrapper.appendChild(dot);
-            dotsRing.appendChild(wrapper);
+        const svgDotsGroup = document.getElementById('svgDotsGroup');
+        if (svgDotsGroup) {
+            svgDotsGroup.innerHTML = '';
+            for (let i = 0; i < 72; i++) {
+                const angleDeg = i * 5 - 7.5;
+                const rad = (angleDeg - 90) * Math.PI / 180;
+                const cx = 235 + 226 * Math.cos(rad);
+                const cy = 235 + 226 * Math.sin(rad);
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', cx.toFixed(3));
+                circle.setAttribute('cy', cy.toFixed(3));
+                circle.setAttribute('r', '4.25');
+                circle.setAttribute('fill', '#ffffff');
+                circle.setAttribute('filter', 'url(#dot-shadow)');
+                circle.setAttribute('shape-rendering', 'geometricPrecision');
+                svgDotsGroup.appendChild(circle);
+            }
         }
 
         function switchView(viewName) {
@@ -1109,7 +1106,7 @@
                 isSpecialMode: isSpecialMode,
                 specialWedges: specialWedges,
                 wheelDisplay: wheelGraphic.style.display,
-                wheelBg: wheelGraphic.style.backgroundImage,
+                wheelBg: wheelFace ? wheelFace.style.backgroundImage : "url('./Nón.png')",
                 zoomed: wheelArea.classList.contains('zoomed'),
                 subWheelTilt: tilt,
                 popupDisplay: specialValuePopup.style.display,
@@ -1118,10 +1115,6 @@
                 itemsState: {}
             };
             Object.keys(itemsPlacementConfig).forEach(itemName => {
-                if (itemName === "Ô Mất điểm cố định") {
-                    state.itemsState[itemName] = 'block';
-                    return;
-                }
                 const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
                 const el = document.getElementById(targetId);
                 if (el) state.itemsState[itemName] = el.style.display;
@@ -1148,22 +1141,31 @@
             }
 
             const newState = Object.assign({}, currentState, localState);
+            if (currentState.turns && !localState.turns) {
+                newState.turns = currentState.turns;
+            }
+            if (currentState.spinButtons && !localState.spinButtons) {
+                newState.spinButtons = currentState.spinButtons;
+            }
 
-            await supabase.from('game_room_state').update({
+            await supabase.from('game_room_state').upsert({
+                room_id: roomId,
                 wheel_state: newState,
                 updated_at: new Date().toISOString()
-            }).eq('room_id', roomId);
+            }, { onConflict: 'room_id' });
         }
 
         function updateWheelBackgroundSize() {
             const isRegular = isRegularWheelType(activeWheelType);
-            if (isRegular) {
-                wheelGraphic.style.backgroundSize = 'calc(100% + 7px) calc(100% + 7px)';
-            } else {
-                wheelGraphic.style.backgroundSize = 'calc(100% + 10px) calc(100% + 10px)';
+            if (wheelFace) {
+                if (isRegular) {
+                    wheelFace.style.backgroundSize = '100% 100%';
+                } else {
+                    wheelFace.style.backgroundSize = '101.86% 101.86%';
+                }
+                wheelFace.style.backgroundPosition = 'center center';
+                wheelFace.style.backgroundRepeat = 'no-repeat';
             }
-            wheelGraphic.style.backgroundClip = 'border-box';
-            wheelGraphic.style.backgroundPosition = 'center center';
         }
 
         function applyWheelState(state) {
@@ -1175,8 +1177,9 @@
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
             wheelGraphic.style.display = state.wheelDisplay || 'block';
-            wheelGraphic.style.backgroundImage = state.wheelBg || "url('./Nón.png')";
-            activeWheelType = inferWheelTypeFromBg(state.wheelBg || wheelGraphic.style.backgroundImage);
+            const bg = state.wheelBg || "url('./Nón.png')";
+            if (wheelFace) wheelFace.style.backgroundImage = bg;
+            activeWheelType = inferWheelTypeFromBg(bg);
             updateWheelBackgroundSize();
 
             // BỔ SUNG: Khôi phục chính xác góc nghiêng/zoom khi F5 hoặc mở muộn
@@ -1195,7 +1198,6 @@
 
             if (state.itemsState) {
                 Object.keys(state.itemsState).forEach(itemName => {
-                    if (itemName === "Ô Mất điểm cố định") return; // Ô Mất điểm cố định gắn cứng trên Nón thường
                     const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
                     const el = document.getElementById(targetId);
                     if (el) el.style.display = state.itemsState[itemName];
@@ -1248,7 +1250,7 @@
         }
 
         function executeToggleItem(itemName, isShow) {
-            if (itemName === "Ô 5.000" || itemName === "Ô Mất điểm cố định") return;
+            if (itemName === "Ô 5.000") return;
             const targetId = 'render-item-' + itemName.replace(/\s+/g, '_');
             const itemElement = document.getElementById(targetId);
             if (itemElement) {
@@ -1266,30 +1268,30 @@
             wheelGraphic.style.display = 'block';
 
             if (type === 'special') {
-                wheelGraphic.style.backgroundImage = "url('./Nón Đặc Biệt.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón Đặc Biệt.png')";
                 isSpecialMode = true;
                 activeWheelType = 'special';
             } else if (type === 'sub_wheel') {
-                wheelGraphic.style.backgroundImage = "url('./Nón Phụ.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón Phụ.png')";
                 isSpecialMode = true;
                 activeWheelType = 'sub_wheel';
             } else if (type === 'wheel_2') {
-                wheelGraphic.style.backgroundImage = "url('./Nón 2.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón 2.png')";
                 isSpecialMode = false;
                 activeWheelType = 'wheel_2';
                 specialValuePopup.style.display = 'none';
             } else if (type === 'wheel_3') {
-                wheelGraphic.style.backgroundImage = "url('./Nón 3.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón 3.png')";
                 isSpecialMode = false;
                 activeWheelType = 'wheel_3';
                 specialValuePopup.style.display = 'none';
             } else if (type === 'wheel_4') {
-                wheelGraphic.style.backgroundImage = "url('./Nón 4.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón 4.png')";
                 isSpecialMode = false;
                 activeWheelType = 'wheel_4';
                 specialValuePopup.style.display = 'none';
             } else {
-                wheelGraphic.style.backgroundImage = "url('./Nón.png')";
+                if (wheelFace) wheelFace.style.backgroundImage = "url('./Nón.png')";
                 isSpecialMode = false;
                 activeWheelType = 'normal';
                 specialValuePopup.style.display = 'none';
@@ -1323,6 +1325,7 @@
 
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.willChange = 'transform';
             }
 
             const startRotBase = (startRotFromSource !== undefined && startRotFromSource !== null && !isNaN(startRotFromSource))
@@ -1355,6 +1358,7 @@
                 if (elapsed >= durationMs) {
                     const finalNorm = normalizeAngle(targetRot);
                     currentRotation = finalNorm;
+                    if (wheelGraphic) wheelGraphic.style.willChange = 'auto';
                     wheelGraphic.style.transform = `rotate(${finalNorm}deg)`;
                     animationFrameId = null;
                     isSpinningNow = false;
@@ -1378,8 +1382,11 @@
             }
             isSpinningNow = false;
             currentRotation = 270;
-            wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-            wheelGraphic.style.transform = 'rotate(270deg)';
+            if (wheelGraphic) {
+                wheelGraphic.style.willChange = 'auto';
+                wheelGraphic.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+                wheelGraphic.style.transform = 'rotate(270deg)';
+            }
             specialValuePopup.style.display = 'none';
             setTimeout(saveWheelState, 600);
         }
@@ -1429,6 +1436,7 @@
 
             if (wheelGraphic) {
                 wheelGraphic.style.transition = 'none';
+                wheelGraphic.style.willChange = 'transform';
             }
 
             const parseVal = (v) => typeof v === 'string' ? parseInt(v.replace('x', '')) : v;
@@ -1468,6 +1476,7 @@
                 if (elapsed >= durationMs) {
                     const finalNorm = normalizeAngle(targetRot);
                     currentRotation = finalNorm;
+                    if (wheelGraphic) wheelGraphic.style.willChange = 'auto';
                     wheelGraphic.style.transform = `rotate(${finalNorm}deg)`;
 
                     let realValue = specialWedges[targetIndex];
