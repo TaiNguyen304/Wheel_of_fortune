@@ -381,6 +381,15 @@
             </div>
 
             <div class="section">
+                <h2>Set nền vòng quay</h2>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;">
+                    <button id="btnBg1" onclick="setWheelBackground(1)" style="padding: 6px; font-weight: bold; cursor: pointer; border-radius: 4px;">Nền 1</button>
+                    <button id="btnBg2" onclick="setWheelBackground(2)" style="padding: 6px; font-weight: bold; cursor: pointer; border-radius: 4px;">Nền 2</button>
+                    <button id="btnBg3" onclick="setWheelBackground(3)" style="padding: 6px; font-weight: bold; cursor: pointer; border-radius: 4px;">Nền 3</button>
+                </div>
+            </div>
+
+            <div class="section">
                 <h2>Điều khiển Nón</h2>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; margin-bottom: 4px;">
                     <div class="flex-row" style="gap: 2px;">
@@ -593,16 +602,21 @@
                         <div class="score-info-box" id="ctrl-red-round-box" style="background: red; color: #ffffff; font-weight: bold;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-red-total-box" style="background: red; color: #ffffff; font-weight: bold;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 4px;">
-                        <input type="text" id="score-input-red" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
-                        <button onclick="modifyScore('red', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
-                        <button onclick="modifyScore('red', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
-                        <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
-                        <button onclick="modifyScoreMultiplier('red', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
-                        <button onclick="modifyScoreMultiplier('red', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
-                        <button onclick="modifyScoreMultiplier('red', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
-                        <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
-                        <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <input type="text" id="score-input-red" placeholder="Điểm" oninput="formatNumberInput(this)" style="width: 72px;">
+                        <input type="number" id="freq-input-red" value="1" min="1" placeholder="T.Số" title="Tần số xuất hiện chữ cái" style="width: 44px; text-align: center;">
+                        <button onclick="modifyScore('red', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold; padding: 4px 6px;">Vòng +</button>
+                        <button onclick="modifyScore('red', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold; padding: 4px 6px;">Tổng +</button>
+                        <button onclick="modifyScore('red', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold; padding: 4px 6px;">Vòng -</button>
+                        <button onclick="clearScoreText('red')" style="background: #4a4a4a; color: #ffffff; font-weight: bold; padding: 4px 6px;" title="Xóa ô điểm">Xóa text</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <button onclick="addRoundToTotal('red')" style="background: #008000; color: #ffffff; font-weight: bold; flex: 1.2; padding: 4px 6px;">Cộng vòng vào tổng</button>
+                        <button onclick="modifyScoreMultiplier('red', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('red', 2)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x2</button>
+                        <button onclick="modifyScoreMultiplier('red', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">:2</button>
+                        <button onclick="resetPlayerScore('red', 'round')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('red', 'total')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs tổng</button>
                     </div>
                     <div class="flex-row" id="cards-row-red" style="gap: 3px;"></div>
                 </div>
@@ -616,16 +630,21 @@
                         <div class="score-info-box" id="ctrl-yellow-round-box" style="background: #ffff00; color: #000000; font-weight: bold;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-yellow-total-box" style="background: #ffff00; color: #000000; font-weight: bold;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 4px;">
-                        <input type="text" id="score-input-yellow" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
-                        <button onclick="modifyScore('yellow', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
-                        <button onclick="modifyScore('yellow', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
-                        <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
-                        <button onclick="modifyScoreMultiplier('yellow', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
-                        <button onclick="modifyScoreMultiplier('yellow', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
-                        <button onclick="modifyScoreMultiplier('yellow', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
-                        <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
-                        <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <input type="text" id="score-input-yellow" placeholder="Điểm" oninput="formatNumberInput(this)" style="width: 72px;">
+                        <input type="number" id="freq-input-yellow" value="1" min="1" placeholder="T.Số" title="Tần số xuất hiện chữ cái" style="width: 44px; text-align: center;">
+                        <button onclick="modifyScore('yellow', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold; padding: 4px 6px;">Vòng +</button>
+                        <button onclick="modifyScore('yellow', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold; padding: 4px 6px;">Tổng +</button>
+                        <button onclick="modifyScore('yellow', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold; padding: 4px 6px;">Vòng -</button>
+                        <button onclick="clearScoreText('yellow')" style="background: #4a4a4a; color: #ffffff; font-weight: bold; padding: 4px 6px;" title="Xóa ô điểm">Xóa text</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <button onclick="addRoundToTotal('yellow')" style="background: #008000; color: #ffffff; font-weight: bold; flex: 1.2; padding: 4px 6px;">Cộng vòng vào tổng</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 2)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x2</button>
+                        <button onclick="modifyScoreMultiplier('yellow', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">:2</button>
+                        <button onclick="resetPlayerScore('yellow', 'round')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('yellow', 'total')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs tổng</button>
                     </div>
                     <div class="flex-row" id="cards-row-yellow" style="gap: 3px;"></div>
                 </div>
@@ -639,16 +658,21 @@
                         <div class="score-info-box" id="ctrl-blue-round-box" style="background: #0000ff; color: #ffffff; font-weight: bold;">Điểm Vòng: 0</div>
                         <div class="score-info-box" id="ctrl-blue-total-box" style="background: #0000ff; color: #ffffff; font-weight: bold;">Điểm Tổng: 0</div>
                     </div>
-                    <div class="flex-row" style="margin-bottom: 4px;">
-                        <input type="text" id="score-input-blue" placeholder="Nhập điểm" oninput="formatNumberInput(this)" style="width: 80px;">
-                        <button onclick="modifyScore('blue', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold;">Tổng +</button>
-                        <button onclick="modifyScore('blue', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold;">Vòng +</button>
-                        <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold;">Vòng -</button>
-                        <button onclick="modifyScoreMultiplier('blue', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold;">x1.5</button>
-                        <button onclick="modifyScoreMultiplier('blue', 2)" style="background: #800080; color: #ffffff; font-weight: bold;">x2</button>
-                        <button onclick="modifyScoreMultiplier('blue', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold;">:2</button>
-                        <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs vòng</button>
-                        <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: #ffffff; font-weight: bold;">Rs tổng</button>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <input type="text" id="score-input-blue" placeholder="Điểm" oninput="formatNumberInput(this)" style="width: 72px;">
+                        <input type="number" id="freq-input-blue" value="1" min="1" placeholder="T.Số" title="Tần số xuất hiện chữ cái" style="width: 44px; text-align: center;">
+                        <button onclick="modifyScore('blue', 'round', 'add')" style="background: #ffff00; color: #000000; font-weight: bold; padding: 4px 6px;">Vòng +</button>
+                        <button onclick="modifyScore('blue', 'total', 'add')" style="background: #0000ff; color: #ffffff; font-weight: bold; padding: 4px 6px;">Tổng +</button>
+                        <button onclick="modifyScore('blue', 'round', 'sub')" style="background: red; color: #ffffff; font-weight: bold; padding: 4px 6px;">Vòng -</button>
+                        <button onclick="clearScoreText('blue')" style="background: #4a4a4a; color: #ffffff; font-weight: bold; padding: 4px 6px;" title="Xóa ô điểm">Xóa text</button>
+                    </div>
+                    <div class="flex-row" style="margin-bottom: 4px; gap: 3px; flex-wrap: wrap;">
+                        <button onclick="addRoundToTotal('blue')" style="background: #008000; color: #ffffff; font-weight: bold; flex: 1.2; padding: 4px 6px;">Cộng vòng vào tổng</button>
+                        <button onclick="modifyScoreMultiplier('blue', 1.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x1.5</button>
+                        <button onclick="modifyScoreMultiplier('blue', 2)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">x2</button>
+                        <button onclick="modifyScoreMultiplier('blue', 0.5)" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">:2</button>
+                        <button onclick="resetPlayerScore('blue', 'round')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs vòng</button>
+                        <button onclick="resetPlayerScore('blue', 'total')" style="background: #800080; color: #ffffff; font-weight: bold; padding: 4px 6px;">Rs tổng</button>
                     </div>
                     <div class="flex-row" id="cards-row-blue" style="gap: 3px;"></div>
                 </div>
@@ -776,10 +800,50 @@
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
 
+        let currentWheelBgIndex = 1;
+
+        function updateBgButtonsUI(idx) {
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById('btnBg' + i);
+                if (btn) {
+                    if (i === idx) {
+                        btn.style.background = '#ffff00';
+                        btn.style.color = '#000000';
+                        btn.style.border = '2px solid #e11d48';
+                        btn.style.boxShadow = '0 0 6px rgba(255, 255, 0, 0.9)';
+                    } else {
+                        btn.style.background = '#f1f5f9';
+                        btn.style.color = '#334155';
+                        btn.style.border = '1px solid #cbd5e1';
+                        btn.style.boxShadow = 'none';
+                    }
+                }
+            }
+        }
+
+        function setWheelBackground(idx) {
+            currentWheelBgIndex = idx;
+            updateBgButtonsUI(idx);
+            localStorage.setItem('wheel_bg', idx);
+
+            try {
+                if (window.BroadcastChannel) {
+                    const bc = new BroadcastChannel('wheel_bg_channel');
+                    bc.postMessage({ bgIndex: idx, bgUrl: './Nền ' + idx + '.jpg' });
+                    bc.close();
+                }
+            } catch (e) {}
+
+            if (roomId && channel) {
+                sendEvent('set_background', { bgIndex: idx, bgUrl: './Nền ' + idx + '.jpg' });
+                updateWheelStateFields({ backgroundIndex: idx, backgroundUrl: './Nền ' + idx + '.jpg' });
+            }
+        }
+
         function setControllerActive(isActive) {
             const allButtons = document.querySelectorAll('button');
             allButtons.forEach(btn => {
-                if (btn.id !== 'btnCreateRoom') {
+                if (btn.id !== 'btnCreateRoom' && btn.id !== 'btnBg1' && btn.id !== 'btnBg2' && btn.id !== 'btnBg3') {
                     btn.disabled = !isActive;
                 }
             });
@@ -893,7 +957,9 @@
                     itemsState: {},
                     turns: { red: false, yellow: false, blue: false },
                     spinButtons: { red: false, yellow: false, blue: false },
-                    pointerLights: { red: 'off', yellow: 'off', blue: 'off' }
+                    pointerLights: { red: 'off', yellow: 'off', blue: 'off' },
+                    backgroundIndex: currentWheelBgIndex,
+                    backgroundUrl: './Nền ' + currentWheelBgIndex + '.jpg'
                 },
                 scores: defaultScores,
                 player_cards: defaultCards,
@@ -978,6 +1044,10 @@
                 }
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
+                }
+                if (data.wheel_state.backgroundIndex) {
+                    currentWheelBgIndex = data.wheel_state.backgroundIndex;
+                    updateBgButtonsUI(currentWheelBgIndex);
                 }
                 if (data.wheel_state.itemsState) {
                     globalItemsState = Object.assign(globalItemsState, data.wheel_state.itemsState);
@@ -1080,6 +1150,7 @@
                         jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
                     };
                     sendEvent('sync_custom_data', customData);
+                    sendEvent('set_background', { bgIndex: currentWheelBgIndex, bgUrl: './Nền ' + currentWheelBgIndex + '.jpg' });
                 }
             });
             channel.subscribe();
@@ -1165,6 +1236,13 @@
 
         function zoomPointer(type) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            try {
+                if (window.BroadcastChannel) {
+                    const bc = new BroadcastChannel('wheel_zoom_channel');
+                    bc.postMessage({ event: 'zoom_pointer', type: type });
+                    bc.close();
+                }
+            } catch (e) {}
             if (type === 'out') {
                 // Ease out: Về góc thẳng và bỏ Zoom
                 sendEvent('zoom_pointer', { type: 'out' });
@@ -1373,19 +1451,46 @@
         function modifyScore(color, type, operation) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             const inputEl = document.getElementById(`score-input-${color}`);
+            const freqEl = document.getElementById(`freq-input-${color}`);
+
             // Loại bỏ tất cả dấu chấm trước khi tiến hành parse thành số nguyên xử lý tính toán
-            let cleanValue = inputEl.value.replace(/\./g, "");
+            let cleanValue = inputEl ? inputEl.value.replace(/\./g, "") : "";
             let val = parseInt(cleanValue);
             if (isNaN(val)) val = 0;
 
+            let freq = 1;
+            if (freqEl) {
+                let parsedFreq = parseInt(freqEl.value);
+                if (!isNaN(parsedFreq) && parsedFreq > 0) {
+                    freq = parsedFreq;
+                }
+            }
+
+            let effectiveVal = val * freq;
+
             let key = color + type.charAt(0).toUpperCase() + type.slice(1);
             if (operation === 'add') {
-                globalScores[key] += val;
+                globalScores[key] += effectiveVal;
             } else if (operation === 'sub') {
-                globalScores[key] -= val;
+                globalScores[key] -= effectiveVal;
             }
             syncScoresToWheel();
-            inputEl.value = '';
+            // Không tự động xóa text điểm theo yêu cầu
+        }
+
+        function clearScoreText(color) {
+            const inputEl = document.getElementById(`score-input-${color}`);
+            if (inputEl) inputEl.value = '';
+            const freqEl = document.getElementById(`freq-input-${color}`);
+            if (freqEl) freqEl.value = '1';
+        }
+
+        function addRoundToTotal(color) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const roundKey = color + 'Round';
+            const totalKey = color + 'Total';
+            globalScores[totalKey] += (globalScores[roundKey] || 0);
+            syncScoresToWheel();
         }
 
         function modifyScoreMultiplier(color, multiplier) {
@@ -1507,6 +1612,13 @@
 
         function easeTiltSubWheel(direction) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            try {
+                if (window.BroadcastChannel) {
+                    const bc = new BroadcastChannel('wheel_zoom_channel');
+                    bc.postMessage({ event: 'tilt_sub_wheel', direction: direction });
+                    bc.close();
+                }
+            } catch (e) {}
             sendEvent('tilt_sub_wheel', { direction: direction });
             updateWheelStateFields({ subWheelTilt: direction, zoomed: true });
         }
@@ -1750,6 +1862,12 @@
         updateSecretBoxesDisplay();
         updateSpeedUpDisplay();
         renderRewardsGrid();
+
+        const savedBg = localStorage.getItem('wheel_bg');
+        if (savedBg) {
+            currentWheelBgIndex = parseInt(savedBg) || 1;
+        }
+        updateBgButtonsUI(currentWheelBgIndex);
 
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {

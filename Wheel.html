@@ -16,7 +16,7 @@
         body {
             margin: 0;
             padding: 0;
-            background: purple;
+            background-color: #1a0022;
             color: white;
             display: flex;
             justify-content: center;
@@ -24,6 +24,40 @@
             height: 100vh;
             overflow: hidden;
             position: relative;
+        }
+
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            background-color: #1a0022;
+            background-image: url('./Nền 1.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            transform-origin: center center;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+            transform: scale(1) rotate(0deg);
+        }
+
+        .bg-layer.zoomed,
+        .bg-layer.zoomed-yellow {
+            transform: scale(2.2) translateY(180px) rotate(0deg) !important;
+        }
+
+        .bg-layer.zoomed.tilt-red,
+        .bg-layer.zoomed-red {
+            transform: scale(2.2) translateY(180px) rotate(30deg) !important;
+        }
+
+        .bg-layer.zoomed.tilt-blue,
+        .bg-layer.zoomed-blue {
+            transform: scale(2.2) translateY(180px) rotate(-30deg) !important;
         }
 
         .view-navigation {
@@ -76,6 +110,7 @@
             position: absolute;
             top: 0;
             left: 0;
+            z-index: 1;
         }
 
         .wheel-area {
@@ -83,8 +118,8 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            width: 600px;
-            height: 600px;
+            width: 660px;
+            height: 660px;
             /* Cố định tâm xoay tại chính giữa tâm bánh xe */
             transform-origin: center center !important;
             transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), margin-top 0.8s cubic-bezier(0.25, 1, 0.5, 1);
@@ -97,24 +132,24 @@
         /* 1. EASE IN VÀNG: Zoom x2, xoay 0 deg, đẩy khung hình lên trên để thấy rõ 3 kim */
         .wheel-area.zoomed {
             transform: scale(2) rotate(0deg) !important;
-            margin-top: 750px;
+            margin-top: 760px;
         }
 
         /* 2. EASE IN ĐỎ: Giữ vị trí Zoom góc trên, xoay 30 deg */
         .wheel-area.zoomed.tilt-red {
             transform: scale(2) rotate(30deg) !important;
-            margin-top: 750px;
+            margin-top: 760px;
         }
 
         /* 3. EASE IN XANH: Giữ vị trí Zoom góc trên, xoay -30 deg */
         .wheel-area.zoomed.tilt-blue {
             transform: scale(2) rotate(-30deg) !important;
-            margin-top: 750px;
+            margin-top: 760px;
         }
 
         .wheel-container {
-            width: 470px;
-            height: 470px;
+            width: 560px;
+            height: 560px;
             position: relative;
             border-radius: 50%;
             box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
@@ -128,7 +163,7 @@
             border-radius: 50%;
             display: block;
             position: relative;
-            transform-origin: 235px 235px !important;
+            transform-origin: center center !important;
             overflow: visible;
             image-rendering: -webkit-optimize-contrast;
             image-rendering: high-quality;
@@ -137,10 +172,10 @@
 
         .wheel-face {
             position: absolute;
-            top: 18px;
-            left: 18px;
-            width: calc(100% - 36px);
-            height: calc(100% - 36px);
+            top: 21px;
+            left: 21px;
+            width: calc(100% - 42px);
+            height: calc(100% - 42px);
             border-radius: 50%;
             background-image: url('./Nón.png');
             background-position: center center !important;
@@ -192,10 +227,10 @@
 
         .items-ring {
             position: absolute;
-            top: 18px;
-            left: 18px;
-            width: calc(100% - 36px);
-            height: calc(100% - 36px);
+            top: 21px;
+            left: 21px;
+            width: calc(100% - 42px);
+            height: calc(100% - 42px);
             pointer-events: none;
             z-index: 2;
             transform-origin: center center !important;
@@ -221,17 +256,18 @@
         }
 
         .placed-item.is-card img {
-            top: 6px;
-            width: 8.5%;
-            max-height: 38px;
+            top: 14px;
+            width: 9.4%;
+            max-height: 52px;
             object-fit: contain;
             clip-path: none;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
         }
 
         .placed-item.is-wedge img {
             top: 0px;
-            width: 13.1%;
-            height: 30%;
+            width: 13.25%;
+            height: 30.2%;
             object-fit: fill;
             clip-path: none;
         }
@@ -244,7 +280,7 @@
             height: 100%;
             pointer-events: none;
             z-index: 5;
-            transform-origin: 235px 235px !important;
+            transform-origin: center center !important;
             shape-rendering: geometricPrecision;
         }
 
@@ -254,7 +290,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            transform-origin: 235px 235px !important;
+            transform-origin: center center !important;
             z-index: 10;
             pointer-events: none;
         }
@@ -273,10 +309,10 @@
 
         .pointer-body {
             position: absolute;
-            top: -12px;
-            left: calc(50% - 10px);
-            width: 20px;
-            height: 32px;
+            top: -14px;
+            left: calc(50% - 12px);
+            width: 24px;
+            height: 38px;
         }
 
         .pointer-body svg path {
@@ -434,6 +470,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             transition: all 0.3s ease;
+            height: 100%;
+            min-height: 110px;
         }
 
         .v3-card-header {
@@ -610,6 +648,7 @@
 </head>
 
 <body>
+    <div id="bgLayer" class="bg-layer"></div>
 
     <div class="view-navigation" id="viewNav">
         <button id="btn-view-wheel" class="view-btn active" onclick="switchView('wheel')">View 1: Vòng quay</button>
@@ -624,14 +663,14 @@
                 <div id="wheelGraphic">
                     <div class="wheel-face" id="wheelFace"></div>
                     <div class="items-ring" id="itemsRing"></div>
-                    <svg id="wheelRingSvg" class="wheel-ring-svg" viewBox="0 0 470 470" width="470" height="470">
+                    <svg id="wheelRingSvg" class="wheel-ring-svg" viewBox="0 0 560 560" width="560" height="560">
                         <defs>
                             <filter id="dot-shadow" x="-30%" y="-30%" width="160%" height="160%">
                                 <feDropShadow dx="0" dy="1" stdDeviation="0.75" flood-color="#000000" flood-opacity="0.85" />
                             </filter>
                         </defs>
                         <!-- Vòng tròn đen chuẩn xác tuyệt đối (chuẩn hình tròn, không lệch tâm) -->
-                        <circle cx="235" cy="235" r="226" fill="none" stroke="#000000" stroke-width="18" shape-rendering="geometricPrecision" />
+                        <circle cx="280" cy="280" r="269" fill="none" stroke="#000000" stroke-width="22" shape-rendering="geometricPrecision" />
                         <!-- 72 chấm tròn chuẩn xác nằm chính giữa dải viền đen -->
                         <g id="svgDotsGroup"></g>
                     </svg>
@@ -639,7 +678,7 @@
                 <div id="specialValuePopup">0 điểm</div>
                 <div class="pointer-wrapper wrapper-red">
                     <div class="pointer-body" id="pointer-red">
-                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                        <svg width="24" height="38" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
                             <defs>
                                 <filter id="p-shadow-red" x="-30%" y="-30%" width="160%" height="160%">
                                     <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
@@ -652,7 +691,7 @@
                 </div>
                 <div class="pointer-wrapper wrapper-yellow">
                     <div class="pointer-body" id="pointer-yellow">
-                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                        <svg width="24" height="38" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
                             <defs>
                                 <filter id="p-shadow-yellow" x="-30%" y="-30%" width="160%" height="160%">
                                     <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
@@ -665,7 +704,7 @@
                 </div>
                 <div class="pointer-wrapper wrapper-blue">
                     <div class="pointer-body" id="pointer-blue">
-                        <svg width="20" height="32" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
+                        <svg width="24" height="38" viewBox="0 0 20 32" style="display: block;" shape-rendering="geometricPrecision">
                             <defs>
                                 <filter id="p-shadow-blue" x="-30%" y="-30%" width="160%" height="160%">
                                     <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.6" />
@@ -947,12 +986,12 @@
             for (let i = 0; i < 72; i++) {
                 const angleDeg = i * 5 - 7.5;
                 const rad = (angleDeg - 90) * Math.PI / 180;
-                const cx = 235 + 226 * Math.cos(rad);
-                const cy = 235 + 226 * Math.sin(rad);
+                const cx = 280 + 269 * Math.cos(rad);
+                const cy = 280 + 269 * Math.sin(rad);
                 const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                 circle.setAttribute('cx', cx.toFixed(3));
                 circle.setAttribute('cy', cy.toFixed(3));
-                circle.setAttribute('r', '4.25');
+                circle.setAttribute('r', '5.1');
                 circle.setAttribute('fill', '#ffffff');
                 circle.setAttribute('filter', 'url(#dot-shadow)');
                 circle.setAttribute('shape-rendering', 'geometricPrecision');
@@ -1112,6 +1151,8 @@
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
                 pointerLights: pointerLightsState,
+                backgroundIndex: currentBgIndex,
+                backgroundUrl: currentBgUrl,
                 itemsState: {}
             };
             Object.keys(itemsPlacementConfig).forEach(itemName => {
@@ -1168,11 +1209,108 @@
             }
         }
 
+        let currentBgIndex = 1;
+        let currentBgUrl = './Nền 1.jpg';
+
+        function applyWheelBackground(bgIndexOrUrl) {
+            if (bgIndexOrUrl === 1 || bgIndexOrUrl === '1' || bgIndexOrUrl === './Nền 1.jpg' || bgIndexOrUrl === 'Nền 1.jpg') {
+                currentBgIndex = 1;
+                currentBgUrl = './Nền 1.jpg';
+            } else if (bgIndexOrUrl === 2 || bgIndexOrUrl === '2' || bgIndexOrUrl === './Nền 2.jpg' || bgIndexOrUrl === 'Nền 2.jpg') {
+                currentBgIndex = 2;
+                currentBgUrl = './Nền 2.jpg';
+            } else if (bgIndexOrUrl === 3 || bgIndexOrUrl === '3' || bgIndexOrUrl === './Nền 3.jpg' || bgIndexOrUrl === 'Nền 3.jpg') {
+                currentBgIndex = 3;
+                currentBgUrl = './Nền 3.jpg';
+            } else if (typeof bgIndexOrUrl === 'string' && bgIndexOrUrl) {
+                currentBgUrl = bgIndexOrUrl;
+            } else {
+                currentBgIndex = 1;
+                currentBgUrl = './Nền 1.jpg';
+            }
+
+            document.body.style.backgroundImage = 'none';
+            document.body.style.backgroundColor = '#1a0022';
+            const bgLayer = document.getElementById('bgLayer');
+            if (bgLayer) {
+                bgLayer.style.backgroundImage = `url('${currentBgUrl}')`;
+            }
+            localStorage.setItem('wheel_bg', currentBgIndex);
+        }
+
+        function updateBackgroundZoom(isZoomed, tilt) {
+            const bgLayer = document.getElementById('bgLayer');
+            if (!bgLayer) return;
+            bgLayer.classList.remove('zoomed', 'zoomed-red', 'zoomed-yellow', 'zoomed-blue', 'tilt-red', 'tilt-blue');
+            if (isZoomed) {
+                bgLayer.classList.add('zoomed');
+                if (tilt === 'red') {
+                    bgLayer.classList.add('tilt-red', 'zoomed-red');
+                } else if (tilt === 'blue') {
+                    bgLayer.classList.add('tilt-blue', 'zoomed-blue');
+                } else {
+                    bgLayer.classList.add('zoomed-yellow');
+                }
+            }
+        }
+
+        try {
+            if (window.BroadcastChannel) {
+                const bgChannel = new BroadcastChannel('wheel_bg_channel');
+                bgChannel.onmessage = (e) => {
+                    if (e.data && (e.data.bgUrl || e.data.bgIndex)) {
+                        applyWheelBackground(e.data.bgUrl || e.data.bgIndex);
+                    }
+                };
+
+                const zoomBc = new BroadcastChannel('wheel_zoom_channel');
+                zoomBc.onmessage = (e) => {
+                    if (e.data) {
+                        if (e.data.event === 'zoom_pointer') {
+                            if (e.data.type === 'in') {
+                                wheelArea.classList.add('zoomed');
+                                wheelArea.classList.remove('tilt-red', 'tilt-blue');
+                                updateBackgroundZoom(true, 'yellow');
+                            } else {
+                                wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+                                updateBackgroundZoom(false, 'none');
+                            }
+                        } else if (e.data.event === 'tilt_sub_wheel') {
+                            wheelArea.classList.add('zoomed');
+                            wheelArea.classList.remove('tilt-red', 'tilt-blue');
+                            if (e.data.direction === 'red') {
+                                wheelArea.classList.add('tilt-red');
+                                updateBackgroundZoom(true, 'red');
+                            } else if (e.data.direction === 'blue') {
+                                wheelArea.classList.add('tilt-blue');
+                                updateBackgroundZoom(true, 'blue');
+                            }
+                        }
+                    }
+                };
+            }
+        } catch (e) {}
+
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'wheel_bg' && e.newValue) {
+                applyWheelBackground(e.newValue);
+            }
+        });
+
+        const savedBg = localStorage.getItem('wheel_bg');
+        if (savedBg) {
+            applyWheelBackground(savedBg);
+        }
+
         function applyWheelState(state) {
             if (!state) return;
             currentRotation = (state.currentRotation !== undefined && state.currentRotation !== null) ? state.currentRotation : 270;
             isSpecialMode = state.isSpecialMode || false;
             specialWedges = state.specialWedges || [];
+
+            if (state.backgroundUrl || state.backgroundIndex) {
+                applyWheelBackground(state.backgroundUrl || state.backgroundIndex);
+            }
 
             wheelGraphic.style.transition = 'none';
             wheelGraphic.style.transform = 'rotate(' + currentRotation + 'deg)';
@@ -1188,9 +1326,15 @@
                 wheelArea.classList.add('zoomed');
                 if (state.subWheelTilt === 'red') {
                     wheelArea.classList.add('tilt-red');
+                    updateBackgroundZoom(true, 'red');
                 } else if (state.subWheelTilt === 'blue') {
                     wheelArea.classList.add('tilt-blue');
+                    updateBackgroundZoom(true, 'blue');
+                } else {
+                    updateBackgroundZoom(true, 'yellow');
                 }
+            } else {
+                updateBackgroundZoom(false, 'none');
             }
 
             specialValuePopup.style.display = state.popupDisplay || 'none';
@@ -1532,8 +1676,10 @@
                 if (payload.payload.type === 'in') {
                     wheelArea.classList.add('zoomed');
                     wheelArea.classList.remove('tilt-red', 'tilt-blue');
+                    updateBackgroundZoom(true, 'yellow');
                 } else if (payload.payload.type === 'out') {
                     wheelArea.classList.remove('zoomed', 'tilt-red', 'tilt-blue');
+                    updateBackgroundZoom(false, 'none');
                 }
                 saveWheelState();
             }).on('broadcast', { event: 'tilt_sub_wheel' }, function (payload) {
@@ -1542,8 +1688,10 @@
 
                 if (payload.payload.direction === 'red') {
                     wheelArea.classList.add('tilt-red');
+                    updateBackgroundZoom(true, 'red');
                 } else if (payload.payload.direction === 'blue') {
                     wheelArea.classList.add('tilt-blue');
+                    updateBackgroundZoom(true, 'blue');
                 }
                 saveWheelState();
             }).on('broadcast', { event: 'toggle_item' }, function (payload) {
@@ -1571,6 +1719,10 @@
             }).on('broadcast', { event: 'play_sound' }, function (payload) {
                 if (payload && payload.payload && payload.payload.sound) {
                     playSoundEffect(payload.payload.sound);
+                }
+            }).on('broadcast', { event: 'set_background' }, function (payload) {
+                if (payload && payload.payload) {
+                    applyWheelBackground(payload.payload.bgUrl || payload.payload.bgIndex);
                 }
             }).subscribe((status) => {
                 if (status === 'SUBSCRIBED') {
