@@ -423,6 +423,19 @@
                     <input type="number" id="spinTime" min="5" max="20" placeholder="VD: 10" style="width: 55px;">
                     <button onclick="spinWheel()" style="flex: 1; background: #ff00ff; color: #000000; font-weight: bold;">Quay Nón</button>
                 </div>
+                <div style="margin-top: 6px; padding-top: 6px; border-top: 1px dashed #ccc;">
+                    <div style="font-size: 11px; margin-bottom: 4px; color: #333; display: flex; justify-content: space-between; align-items: center;">
+                        <span>Nhạc quay Nón:</span>
+                        <span id="savedSpinMusicLabel" style="color: #008000;">Đang lưu: None</span>
+                    </div>
+                    <div class="flex-row" style="gap: 6px; margin-bottom: 4px;">
+                        <label style="font-size: 11px; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;"><input type="radio" name="spinMusicOption" value="none" checked> None</label>
+                        <label style="font-size: 11px; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;"><input type="radio" name="spinMusicOption" value="Spin.mp3"> Spin</label>
+                        <label style="font-size: 11px; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;"><input type="radio" name="spinMusicOption" value="final_spin.mp3"> Final</label>
+                        <label style="font-size: 11px; display: inline-flex; align-items: center; gap: 2px; cursor: pointer;"><input type="radio" name="spinMusicOption" value="bonus_spin.mp3"> Bonus</label>
+                    </div>
+                    <button id="btnSetSpinMusic" onclick="setSpinMusicConfig()" style="width: 100%; background: #008000; color: #ffffff; font-weight: bold;">Set</button>
+                </div>
             </div>
 
             <div class="section">
@@ -437,6 +450,7 @@
                     <button class="sound-btn" onclick="triggerSound('express_1.mp3')">Express 1</button>
                     <button class="sound-btn" onclick="triggerSound('express_2.mp3')">Express 2</button>
                     <button class="sound-btn" onclick="triggerSound('Express 3.mp3')">Express 3</button>
+                    <button class="sound-btn" onclick="triggerSound('Express 4.mp3')">Express 4</button>
                     <button class="sound-btn" onclick="triggerSound('final_spin_bell.mp3')">Final Bell</button>
                     <button class="sound-btn" onclick="triggerSound('final_spin.mp3')">Final Spin</button>
                     <button class="sound-btn" onclick="triggerSound('speed_up.mp3')">Speed up</button>
@@ -473,9 +487,10 @@
                 <div class="grid-pointer">
                     <div class="pointer-control" style="background-color: red; color: #ffffff;">
                         <span>Kim Đỏ:</span>
-                        <div>
+                        <div style="display: flex; gap: 2px;">
                             <button onclick="setPointer('red', 'on')" style="background: green; color: #ffffff;">Mở</button>
                             <button class="btn-off" onclick="setPointer('red', 'off')">Đóng</button>
+                            <button id="btnTogglePointerRed" onclick="togglePointerVisibility('red')" style="background: #1f2937; color: #ffffff;" title="Ẩn/Hiện Kim Đỏ">Ẩn</button>
                         </div>
                     </div>
                     <div class="pointer-control" style="background-color: #ffff00; color: #000000; font-weight: bold;">
@@ -487,9 +502,10 @@
                     </div>
                     <div class="pointer-control" style="background-color: #0000ff; color: #ffffff; font-weight: bold;">
                         <span>Kim Xanh:</span>
-                        <div>
+                        <div style="display: flex; gap: 2px;">
                             <button onclick="setPointer('blue', 'on')" style="background: green; color: #ffffff;">Mở</button>
                             <button class="btn-off" onclick="setPointer('blue', 'off')">Đóng</button>
+                            <button id="btnTogglePointerBlue" onclick="togglePointerVisibility('blue')" style="background: #1f2937; color: #ffffff;" title="Ẩn/Hiện Kim Xanh">Ẩn</button>
                         </div>
                     </div>
                     <div class="pointer-control" style="background-color: #4b5563; color: #ffffff;">
@@ -799,6 +815,43 @@
         let globalTurns = { red: false, yellow: false, blue: false };
         let globalSpinButtons = { red: false, yellow: false, blue: false };
         let globalPointerLights = { red: 'off', yellow: 'off', blue: 'off' };
+        let globalPointerVisibility = { red: true, blue: true };
+        let savedSpinMusic = 'none';
+
+        const spinMusicLabels = {
+            'none': 'None',
+            'Spin.mp3': 'Spin',
+            'final_spin.mp3': 'Final',
+            'bonus_spin.mp3': 'Bonus'
+        };
+
+        function updatePointerVisibilityButtonsUI() {
+            const btnRed = document.getElementById('btnTogglePointerRed');
+            const btnBlue = document.getElementById('btnTogglePointerBlue');
+            if (btnRed) {
+                const isVis = globalPointerVisibility.red !== false;
+                btnRed.innerText = isVis ? 'Ẩn' : 'Hiện';
+                btnRed.style.background = isVis ? '#1f2937' : '#f59e0b';
+                btnRed.style.color = isVis ? '#ffffff' : '#000000';
+            }
+            if (btnBlue) {
+                const isVis = globalPointerVisibility.blue !== false;
+                btnBlue.innerText = isVis ? 'Ẩn' : 'Hiện';
+                btnBlue.style.background = isVis ? '#1f2937' : '#f59e0b';
+                btnBlue.style.color = isVis ? '#ffffff' : '#000000';
+            }
+        }
+
+        function updateSpinMusicUI() {
+            const radios = document.querySelectorAll('input[name="spinMusicOption"]');
+            radios.forEach(r => {
+                r.checked = (r.value === savedSpinMusic);
+            });
+            const labelEl = document.getElementById('savedSpinMusicLabel');
+            if (labelEl) {
+                labelEl.innerText = 'Đang lưu: ' + (spinMusicLabels[savedSpinMusic] || 'None');
+            }
+        }
 
         let currentWheelBgIndex = 1;
 
@@ -958,6 +1011,8 @@
                     turns: { red: false, yellow: false, blue: false },
                     spinButtons: { red: false, yellow: false, blue: false },
                     pointerLights: { red: 'off', yellow: 'off', blue: 'off' },
+                    pointerVisibility: { red: true, blue: true },
+                    spinMusic: 'none',
                     backgroundIndex: currentWheelBgIndex,
                     backgroundUrl: './Nền ' + currentWheelBgIndex + '.jpg'
                 },
@@ -1045,6 +1100,14 @@
                 if (data.wheel_state.pointerLights) {
                     globalPointerLights = Object.assign(globalPointerLights, data.wheel_state.pointerLights);
                 }
+                if (data.wheel_state.pointerVisibility) {
+                    globalPointerVisibility = Object.assign(globalPointerVisibility, data.wheel_state.pointerVisibility);
+                    updatePointerVisibilityButtonsUI();
+                }
+                if (data.wheel_state.spinMusic !== undefined) {
+                    savedSpinMusic = data.wheel_state.spinMusic;
+                    updateSpinMusicUI();
+                }
                 if (data.wheel_state.backgroundIndex) {
                     currentWheelBgIndex = data.wheel_state.backgroundIndex;
                     updateBgButtonsUI(currentWheelBgIndex);
@@ -1056,6 +1119,7 @@
                     const c = data.wheel_state.custom_game_data;
                     if (c.jackpotScore !== undefined) jackpotScore = c.jackpotScore;
                     if (c.currentMysteryNumber !== undefined) currentMysteryNumber = c.currentMysteryNumber;
+                    if (c.mysteryRevealed !== undefined) mysteryRevealed = c.mysteryRevealed;
                     if (c.safeScore !== undefined) safeScore = c.safeScore;
                     if (c.safeCardsState !== undefined) safeCardsState = c.safeCardsState;
                     if (c.secretBox1 !== undefined) secretBox1 = c.secretBox1;
@@ -1076,7 +1140,7 @@
             syncScoresToWheel(false);
             if (roomId) {
                 const customData = {
-                    jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
+                    jackpotScore, currentMysteryNumber, mysteryRevealed, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
                 };
                 sendEvent('sync_custom_data', customData);
             }
@@ -1094,12 +1158,13 @@
             }
         }
 
-        async function saveRoomState() {
+        async function saveRoomState(extraWheelUpdates) {
             if (!roomId) return;
             const customData = {
-                jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
+                jackpotScore, currentMysteryNumber, mysteryRevealed, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
             };
-            updateWheelStateFields({ custom_game_data: customData });
+            const wheelUpdates = Object.assign({ custom_game_data: customData }, extraWheelUpdates || {});
+            updateWheelStateFields(wheelUpdates);
             sendEvent('sync_custom_data', customData);
             await supabase.from('game_room_state').update({
                 scores: globalScores,
@@ -1147,10 +1212,13 @@
                 syncScoresToWheel(false);
                 if (roomId) {
                     const customData = {
-                        jackpotScore, currentMysteryNumber, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
+                        jackpotScore, currentMysteryNumber, mysteryRevealed, safeScore, safeCardsState, secretBox1, secretBox2, secretBoxesHidden, speedUpScore, rewardBoxes: rewardBoxesState
                     };
                     sendEvent('sync_custom_data', customData);
                     sendEvent('set_background', { bgIndex: currentWheelBgIndex, bgUrl: './Nền ' + currentWheelBgIndex + '.jpg' });
+                    sendEvent('set_spin_music', { spinMusic: savedSpinMusic });
+                    sendEvent('pointer_visibility', { pointerName: 'red', visible: globalPointerVisibility.red !== false });
+                    sendEvent('pointer_visibility', { pointerName: 'blue', visible: globalPointerVisibility.blue !== false });
                 }
             });
             channel.subscribe();
@@ -1222,9 +1290,19 @@
                 randomOffset: randomOffset,
                 startTime: startTime,
                 startRot: startRot,
-                minRotations: MIN_SPIN_ROTATIONS
+                minRotations: MIN_SPIN_ROTATIONS,
+                spinMusic: savedSpinMusic
             });
             updateWheelStateFields({ currentRotation: currentRotation });
+        }
+
+        function setSpinMusicConfig() {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const selected = document.querySelector('input[name="spinMusicOption"]:checked');
+            savedSpinMusic = selected ? selected.value : 'none';
+            updateSpinMusicUI();
+            sendEvent('set_spin_music', { spinMusic: savedSpinMusic });
+            updateWheelStateFields({ spinMusic: savedSpinMusic });
         }
 
         function setPointer(pointerName, state) {
@@ -1232,6 +1310,15 @@
             sendEvent('pointer_light', { pointerName, state });
             globalPointerLights[pointerName] = state;
             updateWheelStateFields({ pointerLights: globalPointerLights });
+        }
+
+        function togglePointerVisibility(pointerName) {
+            if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
+            const nextVisible = !(globalPointerVisibility[pointerName] !== false);
+            globalPointerVisibility[pointerName] = nextVisible;
+            updatePointerVisibilityButtonsUI();
+            sendEvent('pointer_visibility', { pointerName, visible: nextVisible });
+            updateWheelStateFields({ pointerVisibility: globalPointerVisibility });
         }
 
         function zoomPointer(type) {
@@ -1256,9 +1343,14 @@
 
         function toggleItem(itemName, isShow) {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
-            sendEvent('toggle_item', { itemName, isShow });
             globalItemsState[itemName] = isShow ? 'block' : 'none';
-            updateWheelStateFields({ itemsState: globalItemsState });
+            if (itemName === 'Ô Ẩn số' && !isShow) {
+                mysteryRevealed = false;
+                saveRoomState({ itemsState: globalItemsState });
+            } else {
+                updateWheelStateFields({ itemsState: globalItemsState });
+            }
+            sendEvent('toggle_item', { itemName, isShow });
         }
 
         // Thêm hàm xáo và phân bố điểm cho Nón Phụ
@@ -1658,8 +1750,9 @@
         // ==========================================
         // 2. Ô ẨN SỐ (Cột 2)
         // ==========================================
-        const mysteryNumberOptions = ["5.000", "7.500", "25.000", "Mất lượt", "Mất Điểm"];
+        const mysteryNumberOptions = ["2.500", "5.000", "7.500", "10.000", "25.000", "Chia đôi", "Nhân đôi", "Mất lượt", "Mất điểm"];
         let currentMysteryNumber = "5.000";
+        let mysteryRevealed = false;
         function updateMysteryNumberDisplay() {
             const el = document.getElementById('mysteryNumberDisplayBox');
             if (el) el.innerText = "Ẩn số: " + currentMysteryNumber;
@@ -1668,14 +1761,20 @@
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             const idx = Math.floor(Math.random() * mysteryNumberOptions.length);
             currentMysteryNumber = mysteryNumberOptions[idx];
+            mysteryRevealed = true;
+            globalItemsState['Ô Ẩn số'] = 'block';
             updateMysteryNumberDisplay();
-            saveRoomState();
+            saveRoomState({ itemsState: globalItemsState });
+            sendEvent('toggle_item', { itemName: 'Ô Ẩn số', isShow: true });
         }
         function setMysteryNumber1000() {
             if (!roomId || !channel) { showRoomError('Vui lòng bấm "Tạo phòng mới" trước khi thao tác!'); return; }
             currentMysteryNumber = "1.000";
+            mysteryRevealed = true;
+            globalItemsState['Ô Ẩn số'] = 'block';
             updateMysteryNumberDisplay();
-            saveRoomState();
+            saveRoomState({ itemsState: globalItemsState });
+            sendEvent('toggle_item', { itemName: 'Ô Ẩn số', isShow: true });
         }
 
         // ==========================================

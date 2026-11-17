@@ -887,6 +887,8 @@
         let isSpinningNow = false;
         let activeWheelType = 'normal';
         let pointerLightsState = { red: 'off', yellow: 'off', blue: 'off' };
+        let pointerVisibilityState = { red: true, blue: true };
+        let currentSpinMusic = 'none';
 
         function normalizeAngle(deg) {
             return ((deg % 360) + 360) % 360;
@@ -1077,6 +1079,33 @@
 
         let currentCustomGameData = null;
 
+        const mysteryNumberImageMap = {
+            "1.000": "Ẩn Số 1000.png",
+            "2.500": "Ẩn Số 2500.png",
+            "5.000": "Ẩn Số 5000.png",
+            "7.500": "Ẩn Số 7500.png",
+            "10.000": "Ẩn Số 10000.png",
+            "25.000": "Ẩn Số 25000.png",
+            "Nhân đôi": "Ẩn Số Nhân Đôi.png",
+            "Chia đôi": "Ẩn Số Chia Đôi.png",
+            "Mất lượt": "Ẩn Số Mất Lượt.png",
+            "Mất điểm": "Ẩn Số Mất Điểm.png",
+            "Mất Điểm": "Ẩn Số Mất Điểm.png"
+        };
+
+        function updateMysteryWedgeImage(data) {
+            const mysteryWrapper = document.getElementById('render-item-Ô_Ẩn_số');
+            if (!mysteryWrapper) return;
+            const mysteryImg = mysteryWrapper.querySelector('img');
+            if (!mysteryImg) return;
+            if (data && data.mysteryRevealed && data.currentMysteryNumber !== undefined) {
+                const mappedFile = mysteryNumberImageMap[data.currentMysteryNumber];
+                mysteryImg.src = './' + (mappedFile || 'Ô Ẩn Số.png');
+            } else {
+                mysteryImg.src = './Ô Ẩn Số.png';
+            }
+        }
+
         function executeUpdateCustomData(data) {
             if (!data) return;
             currentCustomGameData = Object.assign({}, currentCustomGameData || {}, data);
@@ -1090,6 +1119,7 @@
                 const el = document.getElementById('view3-mystery');
                 if (el) el.innerText = data.currentMysteryNumber;
             }
+            updateMysteryWedgeImage(currentCustomGameData);
             // 3. Ô Tăng tốc
             if (data.speedUpScore !== undefined) {
                 const el = document.getElementById('view3-speedup');
@@ -1151,6 +1181,8 @@
                 popupDisplay: specialValuePopup.style.display,
                 popupText: specialValuePopup.innerText,
                 pointerLights: pointerLightsState,
+                pointerVisibility: pointerVisibilityState,
+                spinMusic: currentSpinMusic,
                 backgroundIndex: currentBgIndex,
                 backgroundUrl: currentBgUrl,
                 itemsState: {}
@@ -1358,6 +1390,17 @@
                 });
             }
 
+            if (state.pointerVisibility) {
+                pointerVisibilityState = Object.assign({ red: true, blue: true }, state.pointerVisibility);
+                ['red', 'blue'].forEach(pName => {
+                    executePointerVisibility(pName, pointerVisibilityState[pName] !== false);
+                });
+            }
+
+            if (state.spinMusic !== undefined) {
+                currentSpinMusic = state.spinMusic;
+            }
+
             if (state.custom_game_data) {
                 executeUpdateCustomData(state.custom_game_data);
             }
@@ -1548,6 +1591,14 @@
             }
         }
 
+        function executePointerVisibility(pointerName, isVisible) {
+            const pointerObj = document.getElementById('pointer-' + pointerName);
+            if (!pointerObj) return;
+            pointerVisibilityState[pointerName] = isVisible;
+            const wrapper = pointerObj.closest('.pointer-wrapper') || pointerObj;
+            wrapper.style.display = isVisible ? 'block' : 'none';
+        }
+
         function getWedgeValueAtYellowPointer() {
             if (!isSpecialMode || specialWedges.length === 0) return "Chưa xáo giá trị";
             const rotation = getVisualRotation();
@@ -1669,9 +1720,21 @@
             channel.on('broadcast', { event: 'toggle_wheel' }, function (payload) {
                 executeToggleWheel(payload.payload.type, payload.payload.isShow);
             }).on('broadcast', { event: 'spin_wheel' }, function (payload) {
+                const musicToPlay = (payload.payload && payload.payload.spinMusic !== undefined) ? payload.payload.spinMusic : currentSpinMusic;
+                if (musicToPlay && musicToPlay !== 'none') {
+                    playSoundEffect(musicToPlay);
+                }
                 executeSpin(payload.payload.duration, payload.payload.randomOffset, payload.payload.startTime, payload.payload.startRot, payload.payload.minRotations);
             }).on('broadcast', { event: 'pointer_light' }, function (payload) {
                 executePointerLight(payload.payload.pointerName, payload.payload.state);
+            }).on('broadcast', { event: 'pointer_visibility' }, function (payload) {
+                if (payload && payload.payload) {
+                    executePointerVisibility(payload.payload.pointerName, payload.payload.visible);
+                }
+            }).on('broadcast', { event: 'set_spin_music' }, function (payload) {
+                if (payload && payload.payload && payload.payload.spinMusic !== undefined) {
+                    currentSpinMusic = payload.payload.spinMusic;
+                }
             }).on('broadcast', { event: 'zoom_pointer' }, function (payload) {
                 if (payload.payload.type === 'in') {
                     wheelArea.classList.add('zoomed');
